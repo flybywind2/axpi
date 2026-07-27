@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session 5 · 실행 로드맵과 변화관리 — AX × Process Innovation</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="title">
+  <div class="module-num">05</div>
+  <h1>실행 로드맵과<br><span class="grad-text">변화관리</span></h1>
+  <p class="meta">Session 5 · 16:10–17:20 (70분) · <b>파일럿에서 스케일링으로</b></p>
+  <p class="meta"><a href="../index.html">← 과정 홈으로</a></p>
+</section>
+
+<!-- 2. Objectives -->
+<section>
+  <span class="eyebrow">Objectives</span>
+  <h2>학습 목표</h2>
+  <ol>
+    <li>성공 기준과 킬 크리테리아가 있는 <b>6주 파일럿</b>을 설계한다</li>
+    <li>파일럿 이후 스케일링 경로(CoE·플랫폼)를 설명한다</li>
+    <li>AI 거버넌스의 핵심 요소를 우리 조직에 맞게 나열한다</li>
+    <li><b>ADKAR</b>로 저항을 진단하고 대응 계획을 세운다</li>
+  </ol>
+</section>
+
+<!-- 3. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 1</span>
+  <h2><span class="grad-text">파일럿</span> 설계</h2>
+  <p class="muted">좁고 깊게, 빠르게 증명한다</p>
+</section>
+
+<!-- 4. Pilot principles -->
+<section>
+  <span class="eyebrow">Principles</span>
+  <h2>파일럿 설계 3원칙</h2>
+  <div class="grid-3">
+    <div class="card accent">
+      <span class="ico">🔬</span>
+      <h4>좁고 깊게</h4>
+      <p>E2E 흐름 중 <b>한 구간</b>만 선택해 끝까지 완주합니다. 전사 동시 전개는 금지.</p>
+    </div>
+    <div class="card accent">
+      <span class="ico">⏱️</span>
+      <h4>6주 이내</h4>
+      <p>학습 속도가 성과보다 중요합니다. 6주를 넘는 순간 프로젝트가 됩니다.</p>
+    </div>
+    <div class="card accent">
+      <span class="ico">📊</span>
+      <h4>측정 가능하게</h4>
+      <p>착수 전 기준선(baseline)을 고정하고, 성공·중단 기준을 문서로 남깁니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5. 6-week plan -->
+<section>
+  <span class="eyebrow">Playbook</span>
+  <h2>6주 파일럿 타임라인</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>주차</th><th>활동</th><th>산출물</th></tr></thead>
+    <tbody>
+      <tr><td class="em">0</td><td>데이터 준비 스프린트 · 기준선 측정</td><td>baseline 리포트</td></tr>
+      <tr><td class="em">1</td><td>범위 확정 · 환경 구축 · 킥오프</td><td>파일럿 헌장</td></tr>
+      <tr><td class="em">2</td><td>솔루션 1차 적용 (소규모)</td><td>초기 로그·이슈</td></tr>
+      <tr><td class="em">3</td><td>피드백 반영 · HITL 조정</td><td>개선 백로그</td></tr>
+      <tr><td class="em">4~5</td><td>본격 운영 · 지표 트래킹</td><td>주간 대시보드</td></tr>
+      <tr><td class="em">6</td><td>결과 분석 · 확장/중단 의사결정</td><td>최종 리포트 · 다음 단계 안</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 6. Success / kill criteria -->
+<section>
+  <span class="eyebrow">Criteria</span>
+  <h2>성공 기준과 킬 크리테리아</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ 성공 기준 (예시)</h4>
+      <ul class="small">
+        <li>%STP 31% → 60% 이상</li>
+        <li>리드타임 50% 이상 단축</li>
+        <li>오류율 증가 없음</li>
+        <li>담당자 만족도 3.5/5 이상</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🛑 킬 크리테리아 (예시)</h4>
+      <ul class="small">
+        <li>3주차까지 데이터 정제 불가 판정</li>
+        <li>중대한 보안·컴플라이언스 이슈 발생</li>
+        <li>핵심 지표 개선 10% 미만 + 원인 불명</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout key"><span class="t">왜 킬 크리테리아인가</span>명시적 중단 기준이 있어야 <b>매몰비용의 늪</b>에 빠지지 않습니다. 빠른 중단도 성과입니다 — 학습이 남으니까요.</div>
+</section>
+
+<!-- 7. Build vs buy -->
+<section>
+  <span class="eyebrow">Decision</span>
+  <h2>구축인가, 구매인가, 플랫폼인가</h2>
+  <table>
+    <thead><tr><th>방식</th><th>언제 적합한가</th><th>주의점</th></tr></thead>
+    <tbody>
+      <tr><td class="em">Buy (SaaS)</td><td>범용 업무 (경비·CS·번역 등)</td><td>데이터 반출 정책 확인</td></tr>
+      <tr><td class="em">Build (내재화)</td><td>차별화된 핵심 프로세스</td><td>운영 역량 필요, 과잉 투자 주의</td></tr>
+      <tr><td class="em">Platform (내부 공통 기반)</td><td>반복되는 유사 과제가 3건 이상</td><td>초기 투자 회수에 시간 필요</td></tr>
+    </tbody>
+  </table>
+  <div class="callout tip"><span class="t">실전 팁</span>파일럿은 <b>가장 가벼운 방식</b>으로 시작하세요. 검증 전에 아키텍처부터 세우는 것이 가장 비싼 실수입니다.</div>
+</section>
+
+<!-- 8. Data sprint -->
+<section>
+  <span class="eyebrow">Week 0</span>
+  <h2>0주차: 데이터 준비 스프린트</h2>
+  <ul>
+    <li>☐ 필요한 입력·출력 데이터 목록 확정 (Module 3 체크리스트 재사용)</li>
+    <li>☐ 이력 데이터 추출 · 라벨 정합성 점검</li>
+    <li>☐ 개인정보·기밀 마스킹 적용</li>
+    <li>☐ 기준선 지표 측정 (리드타임·%STP·오류율)</li>
+    <li>☐ 테스트 환경·권한 확보</li>
+  </ul>
+  <p class="small muted">0주차에서 막히면 파일럿을 시작하지 않는 것이 낫습니다. 데이터 없이 시작한 파일럿은 의견 대립으로 끝납니다.</p>
+</section>
+
+<!-- 9. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 2</span>
+  <h2>스케일링과 <span class="grad-text">거버넌스</span></h2>
+  <p class="muted">한 번의 성공을 조직의 능력으로</p>
+</section>
+
+<!-- 10. Scaling -->
+<section>
+  <span class="eyebrow">Scale</span>
+  <h2>파일럿 → 프로그램 → 플랫폼</h2>
+  <div class="flow">
+    <span class="chip">파일럿<br><span class="tiny">1개 프로세스</span></span><span class="arrow">→</span>
+    <span class="chip v">표준화·전개<br><span class="tiny">유사 프로세스 3~5개</span></span><span class="arrow">→</span>
+    <span class="chip c">CoE · 플랫폼<br><span class="tiny">전사 역량화</span></span>
+  </div>
+  <div class="grid-3">
+    <div class="card"><h4>표준화</h4><p class="small">파일럿의 설계·운영 노하우를 플레이북으로 문서화</p></div>
+    <div class="card"><h4>CoE (Center of Excellence)</h4><p class="small">현업 챔피언 + 기술 인력의 상설 조합, 과제 발굴·지원</p></div>
+    <div class="card"><h4>플랫폼</h4><p class="small">공통 데이터·모델·모니터링 기반 위에서 과제를 양산</p></div>
+  </div>
+</section>
+
+<!-- 11. Governance -->
+<section>
+  <span class="eyebrow">Governance</span>
+  <h2>AI 거버넌스 4요소</h2>
+  <table>
+    <thead><tr><th>요소</th><th>결정할 것</th><th>예시</th></tr></thead>
+    <tbody>
+      <tr><td class="em">데이터 분류</td><td>어떤 데이터를 AI에 넣을 수 있는가</td><td>공개/내부/기밀 3단계 + 반출 금지 규칙</td></tr>
+      <tr><td class="em">권한 모델</td><td>에이전트가 할 수 있는 행동의 범위</td><td>조회만 가능 / 기안까지 / 실행은 사람 승인</td></tr>
+      <tr><td class="em">모델 위험 등급</td><td>용도별 검증 강도</td><td>고위험(인사·금융 판단)은 이중 검증 필수</td></tr>
+      <tr><td class="em">감사·모니터링</td><td>사후 설명과 추적 방법</td><td>판단 로그 보관, 샘플링 감사 주기</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 12. RAI -->
+<section>
+  <span class="eyebrow">RAI</span>
+  <h2>책임 있는 AI — 실무 체크</h2>
+  <ul>
+    <li><b>공정성</b> — 특정 집단에게 불리한 결과가 나오지 않는가 (채용·평가 등)</li>
+    <li><b>투명성</b> — "이 결정에 AI가 관여했다"는 사실을 고지하는가</li>
+    <li><b>설명 가능성</b> — 거부·반려 결정의 근거를 제시할 수 있는가</li>
+    <li><b>책임 소재</b> — 최종 책임자가 사람으로 명확한가</li>
+    <li><b>프라이버시</b> — 최소 수집·마스킹·보관 기간이 규정되어 있는가</li>
+  </ul>
+</section>
+
+<!-- 13. Regulation -->
+<section>
+  <span class="eyebrow">Regulation</span>
+  <h2>규제 환경 한눈에</h2>
+  <table>
+    <thead><tr><th>규제</th><th>핵심</th><th>우리가 할 일</th></tr></thead>
+    <tbody>
+      <tr><td class="em">한국 AI 기본법</td><td>'고영향 AI'에 대한 안전성·투명성 의무 부여</td><td>우리 용도가 고영향에 해당하는지 점검</td></tr>
+      <tr><td class="em">EU AI Act</td><td>위험 등급별 차등 규제 (수출·글로벌 서비스 시 적용)</td><td>EU 대상 서비스 여부 확인</td></tr>
+      <tr><td class="em">업권별 가이드</td><td>금융·의료 등 분야별 AI 활용 지침</td><td>해당 업권 가이드라인 확인</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">법령은 개정·하위 규정 정비로 자주 바뀝니다. 이 슬라이드는 방향 감각용으로만 쓰고, <b>법무 검토는 반드시 최신 기준으로</b> 받으세요.</p>
+</section>
+
+<!-- 14. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 3</span>
+  <h2><span class="grad-text">변화관리</span></h2>
+  <p class="muted">시스템이 아니라 사람을 움직이는 일</p>
+</section>
+
+<!-- 15. Resistance -->
+<section>
+  <span class="eyebrow">Resistance</span>
+  <h2>저항의 세 얼굴과 대응</h2>
+  <table>
+    <thead><tr><th>저항의 모습</th><th>속마음</th><th>대응</th></tr></thead>
+    <tbody>
+      <tr><td class="em">회피</td><td>"안 쓰면 없어지겠지"</td><td>작은 성공 체험부터 — 직접 편해지는 순간이 전환점</td></tr>
+      <tr><td class="em">불신</td><td>"AI 결과가 믿을 만한가"</td><td>근거 제시·샘플링 감사 공개, 오류를 숨기지 않기</td></tr>
+      <tr><td class="em">두려움</td><td>"내 일이 사라지는 것 아닌가"</td><td>역할 재설계를 처음부터 함께 — "판단의 일로 이동" 메시지</td></tr>
+    </tbody>
+  </table>
+  <div class="callout info"><span class="t">기억하세요</span>저항은 방해가 아니라 <b>설계 입력</b>입니다. 가장 강하게 반대하는 사람이 가장 정확한 리스크를 알고 있는 경우가 많습니다.</div>
+</section>
+
+<!-- 16. ADKAR -->
+<section>
+  <span class="eyebrow">ADKAR</span>
+  <h2>변화관리 5단계와 실무 액션</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>단계</th><th>의미</th><th>실무 액션 예시</th></tr></thead>
+    <tbody>
+      <tr><td class="em">A — Awareness</td><td>왜 바뀌어야 하는가</td><td>As-Is 지표 공개 ("우리의 4.6일")</td></tr>
+      <tr><td class="em">D — Desire</td><td>나에게 무엇이 좋은가</td><td>담당자별 편익 메시지, 퀵윈 시연</td></tr>
+      <tr><td class="em">K — Knowledge</td><td>어떻게 하는가</td><td>역할별 교육, 실습 중심 온보딩</td></tr>
+      <tr><td class="em">A — Ability</td><td>실제로 할 수 있는가</td><td>병행 운영 기간, 헬프데스크</td></tr>
+      <tr><td class="em">R — Reinforcement</td><td>계속 유지되는가</td><td>KPI 반영, 챔피언 포상, 개선 피드백 루프</td></tr>
+    </tbody>
+  </table>
+  <p class="small">막히는 단계가 사람마다 다릅니다 — 교육(K)이 필요한 사람에게 동기(D) 설득을 반복하지 마세요.</p>
+</section>
+
+<!-- 17. Champions -->
+<section>
+  <span class="eyebrow">Network</span>
+  <h2>챔피언 네트워크와 커뮤니케이션</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🏅 챔피언을 찾아라</h4>
+      <ul class="small">
+        <li>현장에서 신뢰받는 실무자 1~2명</li>
+        <li>파일럿 설계 단계부터 참여</li>
+        <li>성공 스토리를 동료의 언어로 전파</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>📣 대상별 메시지</h4>
+      <ul class="small">
+        <li><b>경영진</b>: 지표·ROI·리스크 (월 1회)</li>
+        <li><b>팀장</b>: 팀별 변화·지원 사항 (격주)</li>
+        <li><b>실무자</b>: 내 일이 어떻게 달라지는가 (수시)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 18. KPI dashboard -->
+<section>
+  <span class="eyebrow">KPI</span>
+  <h2>KPI 대시보드 — 선행과 후행의 균형</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>구분</th><th>지표</th><th>측정 주기</th></tr></thead>
+    <tbody>
+      <tr><td class="em">채택 (선행)</td><td>활성 사용자율, 기능별 사용률, 교육 수료율</td><td>주간</td></tr>
+      <tr><td class="em">품질 (선행)</td><td>AI 판단 정확도, 에스컬레이션율, 샘플 감사 결과</td><td>주간</td></tr>
+      <tr><td class="em">효율 (후행)</td><td>%STP, 리드타임, 건당 비용</td><td>월간</td></tr>
+      <tr><td class="em">만족 (후행)</td><td>직원·고객 만족도, 이탈 신호</td><td>분기</td></tr>
+    </tbody>
+  </table>
+  <div class="callout key"><span class="t">대시보드 원칙</span>선행 지표가 움직여야 후행 지표가 움직입니다. 후행만 보면 3개월 뒤에 후회합니다.</div>
+</section>
+
+<!-- 19. 90-day roadmap -->
+<section>
+  <span class="eyebrow">Roadmap</span>
+  <h2>90일 실행 로드맵 템플릿</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>구간</th><th>목표</th><th>핵심 활동</th></tr></thead>
+    <tbody>
+      <tr><td class="em">1~30일</td><td>준비 완료</td><td>데이터 스프린트, baseline, 파일럿 헌장 승인</td></tr>
+      <tr><td class="em">31~60일</td><td>파일럿 운영</td><td>솔루션 적용, HITL 조정, 주간 대시보드</td></tr>
+      <tr><td class="em">61~90일</td><td>증명·확장 결정</td><td>결과 분석, 비즈니스 케이스 갱신, 확장 안 상정</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Module 4에서 만든 비즈니스 케이스가 이 로드맵의 <b>0일차 입력</b>입니다. 오늘 만든 산출물이 그대로 실행 계획이 됩니다.</p>
+</section>
+
+<!-- 20. Summary -->
+<section>
+  <span class="eyebrow">Summary</span>
+  <h2>Module 5 요약</h2>
+  <ul>
+    <li>파일럿은 <b>좁고 깊게, 6주, 측정 가능하게</b></li>
+    <li>킬 크리테리아를 미리 정하는 것이 프로다</li>
+    <li>스케일링 = 표준화 → CoE → 플랫폼</li>
+    <li>거버넌스 4요소(데이터·권한·위험등급·감사)를 문서로</li>
+    <li>변화관리는 시스템이 아니라 <b>사람별 단계(ADKAR)</b>의 문제</li>
+  </ul>
+</section>
+
+<!-- 21. Check & next -->
+<section>
+  <span class="eyebrow">Check &amp; Next</span>
+  <h2>셀프 체크 · 다음 모듈 예고</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>30초 셀프 체크</h4>
+      <ol>
+        <li>우리 파일럿의 성공 기준 3가지는?</li>
+        <li>가장 큰 저항은 누구에게서, 어떤 모습으로 올까?</li>
+        <li>0주차 데이터 준비에서 막힐 지점은?</li>
+      </ol>
+    </div>
+    <div class="card accent">
+      <h4>다음: Module 6</h4>
+      <p><b>랩업과 실행 계획</b> — 오늘 배운 모든 것을 한 장으로 정리하고, 30/60/90 액션 플랜과 팀 커밋먼트를 작성합니다.</p>
+    </div>
+  </div>
+  <p class="tc small muted" style="margin-top:0.8em"><a href="module6.html">Module 6로 이동 →</a> · <a href="../index.html">과정 홈</a></p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/search/search.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'slide',
+  width: 1280,
+  height: 720,
+  margin: 0.06,
+  minScale: 0.2,
+  maxScale: 1.6,
+  plugins: [RevealHighlight, RevealNotes, RevealZoom, RevealSearch]
+});
+</script>
+</body>
+</html>

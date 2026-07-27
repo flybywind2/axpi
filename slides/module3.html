@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session 3 · To-Be 워크플로우 재설계 방법론 — AX × Process Innovation</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="title">
+  <div class="module-num">03</div>
+  <h1>To-Be 워크플로우<br><span class="grad-text">재설계 방법론</span></h1>
+  <p class="meta">Session 3 · 13:10–14:30 (80분) · <b>지우고, 합치고, 바꾸고, 단순화한 뒤 자동화한다</b></p>
+  <p class="meta"><a href="../index.html">← 과정 홈으로</a></p>
+</section>
+
+<!-- 2. Objectives -->
+<section>
+  <span class="eyebrow">Objectives</span>
+  <h2>학습 목표</h2>
+  <ol>
+    <li>ECRS 원칙으로 프로세스를 <b>단순화한 뒤</b> 자동화하는 순서를 체득한다</li>
+    <li>작업 분류 매트릭스로 인간-AI 역할을 배분한다</li>
+    <li>HITL(Human-in-the-loop) 패턴 4가지를 설계에 적용한다</li>
+    <li>에이전틱 워크플로우 5가지 패턴 중 상황에 맞는 것을 선택한다</li>
+    <li>가드레일·데이터 전제조건을 포함한 To-Be 초안을 작성한다</li>
+  </ol>
+</section>
+
+<!-- 3. Bridge -->
+<section>
+  <span class="eyebrow">Bridge</span>
+  <h2>오전의 진단을 오후의 설계로</h2>
+  <div class="flow">
+    <span class="chip">As-Is 지도</span><span class="arrow">→</span>
+    <span class="chip v">낭비 Top 3</span><span class="arrow">→</span>
+    <span class="chip c">ECRS + AI 재설계</span><span class="arrow">→</span>
+    <span class="chip">To-Be 초안</span>
+  </div>
+  <div class="callout key"><span class="t">오늘 오후의 순서</span>① 재설계 원칙(ECRS+A) → ② 사람과 AI의 역할 나누기 → ③ 협업 패턴(HITL·에이전트) → ④ 가드레일 → ⑤ 실습.</div>
+</section>
+
+<!-- 4. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 1</span>
+  <h2>재설계 원칙 — <span class="grad-text">ECRS + A</span></h2>
+  <p class="muted">자동화는 마지막 순서입니다</p>
+</section>
+
+<!-- 5. ECRS table -->
+<section>
+  <span class="eyebrow">ECRS</span>
+  <h2>네 가지 질문, 네 가지 원칙</h2>
+  <table>
+    <thead><tr><th>원칙</th><th>질문</th><th>한 줄 예시</th></tr></thead>
+    <tbody>
+      <tr><td class="em">E — Eliminate 제거</td><td>이 단계, 없애도 되는가?</td><td>중간 결재 라인 폐지, 중복 보고서 통폐합</td></tr>
+      <tr><td class="em">C — Combine 결합</td><td>나눠진 것을 합칠 수 있는가?</td><td>3개 시스템 입력을 한 번으로, 검토+승인 병합</td></tr>
+      <tr><td class="em">R — Rearrange 재배열</td><td>순서·담당을 바꾸면 나은가?</td><td>사후 검토 → 사전 검증, 병렬 처리</td></tr>
+      <tr><td class="em">S — Simplify 단순화</td><td>더 쉽게 만들 수 있는가?</td><td>양식 항목 축소, 선택지 표준화</td></tr>
+    </tbody>
+  </table>
+  <div class="callout info"><span class="t">그리고 A — Automate</span>위 네 가지로 <b>먼저 줄이고</b>, 남은 것에만 자동화를 적용합니다. 순서가 바뀌면 "소 길 포장"이 됩니다.</div>
+</section>
+
+<!-- 6. ECRS examples -->
+<section>
+  <span class="eyebrow">In Practice</span>
+  <h2>ECRS, 이렇게 적용합니다</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>As-Is (낭비)</th><th>원칙</th><th>To-Be</th></tr></thead>
+    <tbody>
+      <tr><td>모든 경비 건을 팀장·임원 2단계 결재</td><td class="em">E</td><td>정책 충족 소액 건은 <b>결재 자체를 제거</b></td></tr>
+      <tr><td>메일 수신 → 엑셀 정리 → 시스템 입력</td><td class="em">C</td><td>폼 제출 하나로 <b>수집·입력 결합</b></td></tr>
+      <tr><td>완료 후 품질팀 검사 (불량 발견)</td><td class="em">R</td><td>작성 중 <b>실시간 사전 검증</b>으로 순서 변경</td></tr>
+      <tr><td>20칸 신청 양식, 첨부 3종</td><td class="em">S</td><td>핵심 6칸 + 자동 조회로 <b>단순화</b></td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">각 행이 Module 2에서 붙인 낭비 이름과 대응됩니다. 낭비 → 원칙 → 조치의 1:1 매핑이 재설계의 기본 단위입니다.</p>
+</section>
+
+<!-- 7. Automate order -->
+<section>
+  <span class="eyebrow">Order Matters</span>
+  <h2>왜 "먼저 단순화, 나중에 자동화"인가</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🚫 자동화부터 한 경우</h4>
+      <ul class="small">
+        <li>쓸모없는 보고서가 매일 자동 생성됨</li>
+        <li>복잡한 예외를 AI가 그대로 학습 → 오류 확대</li>
+        <li>통합 비용이 자동화 이익을 초과</li>
+      </ul>
+    </div>
+    <div class="card accent">
+      <h4>✅ ECRS 후 자동화한 경우</h4>
+      <ul class="small">
+        <li>자동화 대상 자체가 절반으로 줄어듦</li>
+        <li>남은 작업이 표준화되어 AI 정확도 ↑</li>
+        <li>예외가 단순해져 HITL 설계가 쉬워짐</li>
+      </ul>
+    </div>
+  </div>
+  <blockquote><p>"단순화하지 않은 프로세스의 자동화는 비용이고, 단순화한 프로세스의 자동화는 자산이다."</p></blockquote>
+</section>
+
+<!-- 8. Heuristics -->
+<section>
+  <span class="eyebrow">Checklist</span>
+  <h2>재설계 휴리스틱 10</h2>
+  <div class="grid-2">
+    <ul class="small">
+      <li>서명·승인 단계마다 "왜 필요한가"를 묻는다</li>
+      <li>입력은 한 번만 — 재입력은 설계 결함이다</li>
+      <li>검토는 사후가 아니라 진행 중에 넣는다</li>
+      <li>예외는 유형화하고, 유형별 처리 경로를 만든다</li>
+      <li>찾는 시간을 줄이는 데 투자한다 (검색·인덱스)</li>
+    </ul>
+    <ul class="small">
+      <li>대기가 긴 단계는 병렬로 풀 수 있는지 본다</li>
+      <li>사람이 할 일의 단위를 "판단 1회"로 자른다</li>
+      <li>규칙으로 표현되면 규칙 엔진, 맥락이 필요하면 AI</li>
+      <li>모든 자동화에는 "사람에게 올리기" 버튼을 둔다</li>
+      <li>측정하지 않은 단계는 재설계하지 않는다</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 9. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 2</span>
+  <h2>인간-AI <span class="grad-text">역할 설계</span></h2>
+  <p class="muted">무엇을 AI에게, 무엇을 사람에게</p>
+</section>
+
+<!-- 10. Matrix -->
+<section>
+  <span class="eyebrow">Matrix</span>
+  <h2>작업 분류 매트릭스 2×2</h2>
+  <table class="tbl-sm">
+    <thead><tr><th></th><th>낮은 영향도 (실수 비용 ↓)</th><th>높은 영향도 (실수 비용 ↑)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="em">구조화된 작업<br><span class="muted">(규칙·반복)</span></td>
+        <td><b>완전 자동화</b><br><span class="small">예: 전표 매칭, 분류, 초안 저장</span></td>
+        <td><b>AI 수행 + 사람 승인</b><br><span class="small">예: 지급 실행, 계약서 초안 검토</span></td>
+      </tr>
+      <tr>
+        <td class="em">비정형 작업<br><span class="muted">(맥락·판단)</span></td>
+        <td><b>AI 보조 + 사람 결정</b><br><span class="small">예: 답변 초안 제안, 회의록</span></td>
+        <td><b>사람 주도 + AI 자문</b><br><span class="small">예: 클레임 협상, 채용 최종 판단</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout key"><span class="t">사용법</span>As-Is의 각 단계를 이 네 칸 중 하나에 배치하세요. 배치가 끝나면 To-Be의 뼈대가 나옵니다.</div>
+</section>
+
+<!-- 11. Classification questions -->
+<section>
+  <span class="eyebrow">Decide</span>
+  <h2>배치를 결정하는 4가지 질문</h2>
+  <table>
+    <thead><tr><th>질문</th><th>예에 가까우면</th></tr></thead>
+    <tbody>
+      <tr><td class="em">데이터가 있는가</td><td>과거 사례·로그가 풍부 → 자동화 후보</td></tr>
+      <tr><td class="em">변동성이 낮은가</td><td>규칙·유형이 안정적 → 자동화 후보</td></tr>
+      <tr><td class="em">영향도가 높은가</td><td>금전·안전·평판 리스크 → 사람 승인 필수</td></tr>
+      <tr><td class="em">설명이 필요한가</td><td>근거 제시·책임 소재 필요 → 사람 주도</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">"데이터 있음 + 변동성 낮음 + 영향도 높음" 조합이 가장 흔한 실전 영역이며, <b>AI 수행 + 사람 승인</b> 패턴이 정석입니다.</p>
+</section>
+
+<!-- 12. HITL patterns -->
+<section>
+  <span class="eyebrow">HITL</span>
+  <h2>Human-in-the-loop 패턴 4가지</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🚦 승인 게이트</h4>
+      <p>AI가 안을 만들고, 임계값(금액·위험도) 초과 시 사람이 승인해야 진행됩니다.</p>
+    </div>
+    <div class="card">
+      <h4>🆘 예외 에스컬레이션</h4>
+      <p>자신도 낮음·미분류 케이스는 자동으로 사람에게 라우팅되고, 처리 결과는 학습에 반영됩니다.</p>
+    </div>
+    <div class="card">
+      <h4>🔍 샘플링 감사</h4>
+      <p>자동 처리 건 중 일정 비율을 사람이 표본 점검하여 품질 저하(드리프트)를 조기에 발견합니다.</p>
+    </div>
+    <div class="card">
+      <h4>🔁 피드백 루프</h4>
+      <p>사람의 수정·반려 사유가 데이터로 쌓여 프롬프트·규칙·모델을 지속 개선합니다.</p>
+    </div>
+  </div>
+  <p class="small muted">네 패턴은 조합됩니다: 평소 자동 → 임계값 초과 시 승인 게이트 → 주간 샘플링 감사 → 수정분 피드백.</p>
+</section>
+
+<!-- 13. Agentic 1 -->
+<section>
+  <span class="eyebrow">Agentic Patterns Ⅰ</span>
+  <h2>에이전틱 워크플로우 — 기본형</h2>
+  <div class="grid-2">
+    <div class="card accent">
+      <h4>🔗 프롬프트 체이닝</h4>
+      <p>작업을 고정 순서의 단계로 분해해 연결합니다. (분류 → 초안 → 검토)</p>
+      <p class="small muted"><b>언제</b>: 단계가 안정적이고 순서가 분명한 업무</p>
+    </div>
+    <div class="card accent">
+      <h4>🚏 라우팅</h4>
+      <p>입력을 분류해 각기 다른 처리기(템플릿·모델·사람)로 보냅니다.</p>
+      <p class="small muted"><b>언제</b>: 문의 유형별로 최적 경로가 다른 CS·헬프데스크</p>
+    </div>
+  </div>
+  <div class="callout info"><span class="t">설계 관점</span>이 패턴들은 "AI를 부리는 법"이 아니라 <b>프로세스의 단계를 정의하는 법</b>입니다. ECRS로 정리한 단계 구조가 그대로 체인이 됩니다.</div>
+</section>
+
+<!-- 14. Agentic 2 -->
+<section>
+  <span class="eyebrow">Agentic Patterns Ⅱ</span>
+  <h2>에이전틱 워크플로우 — 확장형</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h4>⚡ 병렬화</h4>
+      <p>독립 하위 작업을 동시에 실행해 취합합니다.</p>
+      <p class="small muted"><b>언제</b>: 다건 검토, 다국어 처리</p>
+    </div>
+    <div class="card">
+      <h4>🧠 오케스트레이터-워커</h4>
+      <p>중앙 에이전트가 계획을 세우고 워커들에게 위임·통합합니다.</p>
+      <p class="small muted"><b>언제</b>: 단계 수를 미리 정할 수 없는 조사·분석</p>
+    </div>
+    <div class="card">
+      <h4>✅ 평가자-개선자</h4>
+      <p>생성 → 평가 → 개선을 반복해 품질 기준을 맞춥니다.</p>
+      <p class="small muted"><b>언제</b>: 보고서·번역 등 품질 기준이 명확한 산출물</p>
+    </div>
+  </div>
+  <div class="callout warn"><span class="t">절제 원칙</span>에이전트 자율성은 <b>단순한 것에서 시작해 검증 후 확장</b>합니다. 체이닝으로 충분한 곳에 오케스트레이터를 쓰지 마세요.</div>
+</section>
+
+<!-- 15. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 3</span>
+  <h2>To-Be 설계 <span class="grad-text">실전</span></h2>
+  <p class="muted">절차 · 사례 · 가드레일</p>
+</section>
+
+<!-- 16. Design steps -->
+<section>
+  <span class="eyebrow">Procedure</span>
+  <h2>To-Be 설계 6단계</h2>
+  <ol>
+    <li><b>낭비 매핑</b> — As-Is 단계별 낭비 이름을 확정</li>
+    <li><b>ECRS 적용</b> — 제거·결합·재배열·단순화 후 남은 단계만 남기기</li>
+    <li><b>역할 배치</b> — 남은 단계를 2×2 매트릭스에 배치</li>
+    <li><b>HITL 설계</b> — 승인 게이트·에스컬레이션 위치 결정</li>
+    <li><b>데이터·가드레일</b> — 입력 데이터, 정책, 감사 로그 정의</li>
+    <li><b>목표 지표 설정</b> — %STP·리드타임·반려율 목표치</li>
+  </ol>
+</section>
+
+<!-- 17. Case As-Is -->
+<section>
+  <span class="eyebrow">Case · 예시</span>
+  <h2>구매 송장 3자 매칭 — As-Is</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>단계</th><th>담당</th><th>시간</th><th>문제</th></tr></thead>
+    <tbody>
+      <tr><td>송장 메일 수신·다운</td><td>경리</td><td>3분</td><td>수기 수집</td></tr>
+      <tr><td>ERP에 전사</td><td>경리</td><td>8분</td><td><b>재입력</b></td></tr>
+      <tr><td>PO·입고증 대조</td><td>경리</td><td>10분</td><td>3개 화면 전환, <b>탐색</b></td></tr>
+      <tr><td>불일치 시 담당자 확인</td><td>구매</td><td>대기 1.5일</td><td><b>대기·핸드오프</b></td></tr>
+      <tr><td>지급 승인</td><td>팀장</td><td>대기 0.5일</td><td>전건 수동 승인</td></tr>
+    </tbody>
+  </table>
+  <p class="small">리드타임 4.6일 · %STP 31% · 건당 비용 ₩12,000 (예시)</p>
+</section>
+
+<!-- 18. Case To-Be -->
+<section>
+  <span class="eyebrow">Case · 예시</span>
+  <h2>구매 송장 3자 매칭 — To-Be</h2>
+  <div class="flow">
+    <span class="chip c">메일 수신·추출 (AI)</span><span class="arrow">→</span>
+    <span class="chip c">자동 3자 매칭 (규칙+AI)</span><span class="arrow">→</span>
+    <span class="chip v">일치: 자동 지급 (게이트: 금액)</span><span class="arrow">→</span>
+    <span class="chip">불일치: 사람 검토 큐</span>
+  </div>
+  <table class="tbl-sm">
+    <thead><tr><th>지표</th><th>As-Is</th><th>To-Be 목표</th><th>적용 원칙</th></tr></thead>
+    <tbody>
+      <tr><td class="em">리드타임</td><td>4.6일</td><td>0.5일</td><td>E·R (대기 제거, 사전 검증)</td></tr>
+      <tr><td class="em">%STP</td><td>31%</td><td>75%</td><td>A (매칭 자동화)</td></tr>
+      <tr><td class="em">건당 비용</td><td>₩12,000</td><td>₩4,500</td><td>C·S (전사 제거)</td></tr>
+      <tr><td class="em">사람의 일</td><td>전사·대조</td><td>불일치 판단·공급사 협의</td><td>역할 재배치</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">HITL: 금액 ≥ ₩500만 또는 매칭 신뢰도 &lt; 90% → 승인 게이트. 자동 처리 건 주 5% 샘플링 감사. (수치는 예시)</p>
+</section>
+
+<!-- 19. Guardrails -->
+<section>
+  <span class="eyebrow">Guardrails</span>
+  <h2>자동화의 안전장치 4가지</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>📜 정책</h4>
+      <p>자동화 가능 범위·임계값·금지 항목을 문서로 고정합니다. (예: "개인정보 포함 건 자동 발송 금지")</p>
+    </div>
+    <div class="card">
+      <h4>🔐 권한</h4>
+      <p>AI 에이전트에도 사람과 같은 최소 권한 원칙을 적용합니다. 시스템 접근·금액 한도를 부여합니다.</p>
+    </div>
+    <div class="card">
+      <h4>🧾 감사 로그</h4>
+      <p>입력·판단 근거·출력·승인자를 모두 기록해 사후 설명 가능하도록 합니다.</p>
+    </div>
+    <div class="card">
+      <h4>🪂 폴백</h4>
+      <p>모델 장애·자신도 저하 시 자동으로 사람 큐로 전환되는 경로를 항상 열어 둡니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 20. Data prereqs -->
+<section>
+  <span class="eyebrow">Data</span>
+  <h2>데이터 전제조건 체크리스트</h2>
+  <ul>
+    <li>☐ 과거 처리 이력(입력 → 결과)이 <b>최소 수백 건</b> 있는가</li>
+    <li>☐ 입력 데이터의 형식이 표준화되어 있는가 (또는 표준화 가능한가)</li>
+    <li>☐ 정답 라벨(승인/반려, 분류 결과)이 함께 기록되어 있는가</li>
+    <li>☐ 예외·특수 사례가 이력으로 구분되는가</li>
+    <li>☐ 개인정보·기밀 데이터의 마스킹 정책이 있는가</li>
+    <li>☐ 데이터 접근 권한·감사 체계가 마련되어 있는가</li>
+  </ul>
+  <div class="callout tip"><span class="t">실전 팁</span>체크가 부족한 항목은 파일럿의 <b>0주차 준비 작업</b>으로 넣으세요. 데이터 없이 모델을 탓하는 것이 가장 흔한 실패입니다.</div>
+</section>
+
+<!-- 21. Activity -->
+<section>
+  <div class="activity">
+    <span class="badge">실습 2 · 30분</span>
+    <h3>ECRS + AI 재설계 캔버스</h3>
+    <ol>
+      <li><b>낭비 → 원칙 매핑 (10분)</b> — 워크시트 C 상단: As-Is 낭비마다 E/C/R/S/A 중 하나를 지정</li>
+      <li><b>To-Be 단계표 (10분)</b> — 남은 단계별로 담당(사람/AI/공동)과 HITL 장치 기록</li>
+      <li><b>목표 지표 (5분)</b> — %STP·리드타임 목표치 선언</li>
+      <li><b>상호 리뷰 (5분)</b> — 옆 조와 캔버스를 교환해 "사라지지 않은 낭비" 하나씩 찾아주기</li>
+    </ol>
+    <p class="small">📄 <a href="worksheet.html" target="_blank">워크시트 C · 재설계 캔버스</a></p>
+  </div>
+</section>
+
+<!-- 22. Pitfalls -->
+<section>
+  <span class="eyebrow">Pitfalls</span>
+  <h2>재설계의 다섯 가지 함정</h2>
+  <ul>
+    <li><b>과잉 자동화</b> — 영향도 높은 판단까지 무인화 → 사고 한 번에 신뢰 증발</li>
+    <li><b>예외 무시</b> — 평균 케이스만 설계 → 운영이 예외 처리로 마비</li>
+    <li><b>섀도 AI</b> — 공식 절차 밖 개인 AI 사용 → 데이터·보안 사각지대</li>
+    <li><b>조급한 자율성</b> — 검증 없이 에이전트 권한 확대</li>
+    <li><b>지표 없는 재설계</b> — 개선 전후를 비교할 수 없어 성과 증명 실패</li>
+  </ul>
+</section>
+
+<!-- 23. Summary -->
+<section>
+  <span class="eyebrow">Summary</span>
+  <h2>Module 3 요약</h2>
+  <ul>
+    <li><b>ECRS → Automate</b>: 줄인 다음에 자동화한다</li>
+    <li>2×2 매트릭스로 단계별 인간-AI 역할을 배치한다</li>
+    <li>HITL 4패턴(승인·에스컬레이션·감사·피드백)으로 안전을 설계한다</li>
+    <li>에이전틱 패턴은 단순한 것부터, 절제해서 쓴다</li>
+    <li>가드레일과 데이터 전제조건은 설계의 일부다</li>
+  </ul>
+</section>
+
+<!-- 24. Check & next -->
+<section>
+  <span class="eyebrow">Check &amp; Next</span>
+  <h2>셀프 체크 · 다음 모듈 예고</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>30초 셀프 체크</h4>
+      <ol>
+        <li>ECRS 중 우리 프로세스에 가장 효과가 큰 것은?</li>
+        <li>"AI 수행 + 사람 승인"이 필요한 단계는 어디인가?</li>
+        <li>우리가 고른 HITL 장치는 무엇인가?</li>
+      </ol>
+    </div>
+    <div class="card accent">
+      <h4>다음: Module 4</h4>
+      <p><b>우선순위화와 비즈니스 케이스</b> — ICE 스코어링, ROI·TCO 모델, 2×2 포트폴리오로 "무엇을 먼저, 얼마의 가치로"를 결정합니다.</p>
+    </div>
+  </div>
+  <p class="tc small muted" style="margin-top:0.8em"><a href="module4.html">Module 4로 이동 →</a> · <a href="../index.html">과정 홈</a></p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/search/search.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'slide',
+  width: 1280,
+  height: 720,
+  margin: 0.06,
+  minScale: 0.2,
+  maxScale: 1.6,
+  plugins: [RevealHighlight, RevealNotes, RevealZoom, RevealSearch]
+});
+</script>
+</body>
+</html>

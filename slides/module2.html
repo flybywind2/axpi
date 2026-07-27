@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Session 2 · E2E 워크플로우 As-Is 진단 — AX × Process Innovation</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="../assets/css/custom.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- 1. Title -->
+<section class="title">
+  <div class="module-num">02</div>
+  <h1>E2E 워크플로우<br><span class="grad-text">As-Is 진단</span></h1>
+  <p class="meta">Session 2 · 10:50–12:10 (80분) · <b>보이지 않으면 고칠 수 없다</b></p>
+  <p class="meta"><a href="../index.html">← 과정 홈으로</a></p>
+</section>
+
+<!-- 2. Objectives -->
+<section>
+  <span class="eyebrow">Objectives</span>
+  <h2>학습 목표</h2>
+  <ol>
+    <li>기능 사일로 관점을 <b>End-to-End 가치흐름</b> 관점으로 전환한다</li>
+    <li>SIPOC·가치흐름지도(VSM)로 As-Is 프로세스를 문서화한다</li>
+    <li>프로세스 마이닝·태스크 마이닝의 활용 조건을 설명한다</li>
+    <li>지식업무의 낭비를 식별하고 <b>핵심 지표로 정량화</b>한다</li>
+  </ol>
+</section>
+
+<!-- 3. Key terms -->
+<section>
+  <span class="eyebrow">Vocabulary</span>
+  <h2>오늘의 핵심 용어</h2>
+  <table class="tbl-lg">
+    <thead><tr><th>용어</th><th>정의</th></tr></thead>
+    <tbody>
+      <tr><td class="em">E2E (End-to-End)</td><td>요청(트리거)부터 가치 전달(완료)까지, 부서를 관통하는 전체 흐름</td></tr>
+      <tr><td class="em">가치흐름 (Value Stream)</td><td>고객 가치를 만드는 단계의 연속 — 낭비와 대비되는 개념</td></tr>
+      <tr><td class="em">핸드오프 (Handoff)</td><td>담당자·부서 간 업무 인수인계. 대기·오해·지연의 주범</td></tr>
+      <tr><td class="em">리드타임 (Lead Time)</td><td>요청 접수부터 완료까지의 <b>벽시계 시간</b> (대기 포함)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 4. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 1</span>
+  <h2>사일로에서 <span class="grad-text">E2E</span>로</h2>
+  <p class="muted">관점을 바꾸면 문제가 보이는 곳이 달라진다</p>
+</section>
+
+<!-- 5. Silo vs E2E -->
+<section>
+  <span class="eyebrow">Perspective</span>
+  <h2>기능 사일로 vs E2E 가치흐름</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>😶 사일로 관점 (부서별)</h4>
+      <p class="mono tiny" style="line-height:1.9">영업팀: 견적 작성 ✓<br>&nbsp;&nbsp;&nbsp;&nbsp;⬇ (대기 2일)<br>구매팀: 발주 ✓<br>&nbsp;&nbsp;&nbsp;&nbsp;⬇ (대기 3일)<br>물류팀: 출고 ✓<br>&nbsp;&nbsp;&nbsp;&nbsp;⬇ (대기 1일)<br>재무팀: 청구 ✓</p>
+      <p class="small">각 부서는 "내 일 끝" — 하지만 고객은 <b>12일</b>을 기다립니다.</p>
+    </div>
+    <div class="card accent">
+      <h4>🔭 E2E 관점 (가치흐름)</h4>
+      <p class="mono tiny" style="line-height:1.9">견적 → 발주 → 출고 → 청구<br>작업시간 합계: <b>6시간</b><br>리드타임 합계: <b>12일</b><br><br>⇒ 가치 창출 시간 2%</p>
+      <p class="small">문제는 작업 속도가 아니라 <b>흐름 사이의 빈 공간(대기·핸드오프)</b>입니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Three flows -->
+<section>
+  <span class="eyebrow">Patterns</span>
+  <h2>대표 E2E 흐름 3가지</h2>
+  <div class="grid-3">
+    <div class="card">
+      <h4>Order-to-Cash</h4>
+      <p>주문 → 이행 → 배송 → 청구 → 수금</p>
+      <p class="small muted">영업·물류·재무를 관통. 현금 회수 속도의 원천.</p>
+    </div>
+    <div class="card">
+      <h4>Procure-to-Pay</h4>
+      <p>구매 요청 → 승인 → 발주 → 검수 → 지급</p>
+      <p class="small muted">요청 부서·구매·재무를 관통. 승인 대기의 온상.</p>
+    </div>
+    <div class="card">
+      <h4>Issue-to-Resolve</h4>
+      <p>접수 → 분류 → 배정 → 처리 → 회신 · 사후관리</p>
+      <p class="small muted">CS·개발·현장을 관통. 고객 경험과 직결.</p>
+    </div>
+  </div>
+  <div class="callout info"><span class="t">생각해 보기</span>여러분이 Module 1에서 고른 프로세스는 위 셋 중 어디에 가깝나요? 이름이 있으면 진단이 쉬워집니다.</div>
+</section>
+
+<!-- 7. Handoff -->
+<section>
+  <span class="eyebrow">Why Handoffs</span>
+  <h2>문제는 왜 항상 '사이'에서 생기는가</h2>
+  <ul>
+    <li><b>컨텍스트 손실</b> — 인수인계마다 정보가 증발하고, 다음 사람은 다시 묻습니다</li>
+    <li><b>대기 행렬</b> — 받는 사람의 할 일 목록 맨 뒤에 줄을 섭니다</li>
+    <li><b>책임 공백</b> — "넘겼다"와 "받았다" 사이, KPI의 사각지대</li>
+    <li><b>양식 변환</b> — 시스템·엑셀·메일을 오가며 재입력이 발생합니다</li>
+  </ul>
+  <div class="callout key"><span class="t">경험칙</span>핸드오프 1회당 지연·오류 비용이 붙습니다. <b>핸드오프 횟수 자체가 비용 지표</b>입니다.</div>
+</section>
+
+<!-- 8. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 2</span>
+  <h2>As-Is <span class="grad-text">매핑 도구</span></h2>
+  <p class="muted">SIPOC · VSM · 프로세스 마이닝</p>
+</section>
+
+<!-- 9. SIPOC -->
+<section>
+  <span class="eyebrow">Tool 1</span>
+  <h2>SIPOC — 30분 만에 그리는 큰 그림</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>S 공급자</th><th>I 입력</th><th>P 프로세스 (5~7단계)</th><th>O 출력</th><th>C 고객</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>임직원 (신청자)<br>카드사</td>
+        <td>경비 신청서<br>증빙 이미지<br>정책 규정</td>
+        <td>① 신청 접수 → ② 증빙 확인 → ③ 정책 검토 → ④ 승인 → ⑤ 지급</td>
+        <td>승인 결과<br>지급 내역<br>전표</td>
+        <td>신청자<br>재무팀<br>감사</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout tip"><span class="t">활용 팁</span>SIPOC는 디테일 전에 <b>경계(boundary)</b>를 정하는 도구입니다. 어디서 시작해 어디서 끝나는지 합의하는 것만으로 회의 절반이 해결됩니다.</div>
+</section>
+
+<!-- 10. VSM -->
+<section>
+  <span class="eyebrow">Tool 2</span>
+  <h2>가치흐름지도(VSM) 5단계</h2>
+  <ol>
+    <li><b>제품군 선정</b> — 하나의 E2E 흐름만 고른다</li>
+    <li><b>현장 관찰로 현재 상태도 작성</b> — 규정문이 아니라 실제 흐름대로</li>
+    <li><b>각 단계에 시간 기록</b> — 작업시간(touch)과 대기시간(wait)을 분리</li>
+    <li><b>가치/낭비 표시</b> — 부가가치(VA) · 비부가가치(NVA) · 필요 비부가가치(RNVA)</li>
+    <li><b>미래 상태도 구상</b> — Module 3에서 본격 수행</li>
+  </ol>
+  <div class="callout warn"><span class="t">주의</span>규정문·매뉴얼로 그리면 "있어야 하는 절차"가 됩니다. 반드시 <b>실제 담당자 인터뷰·관찰</b>로 검증하세요.</div>
+</section>
+
+<!-- 11. Swimlane example -->
+<section>
+  <span class="eyebrow">Example · 예시</span>
+  <h2>As-Is 단계 기록표 — 월간 마감</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>#</th><th>단계</th><th>담당</th><th>작업시간</th><th>대기</th><th>의심 낭비</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>각 팀 실적 취합 요청</td><td>재무 A</td><td>1h</td><td>—</td><td>수기 취합</td></tr>
+      <tr><td>2</td><td>팀별 데이터 제출</td><td>각 팀</td><td>2h×8</td><td><b>2일</b></td><td>대기·독촉</td></tr>
+      <tr><td>3</td><td>양식 정합성 확인·수정</td><td>재무 A</td><td>6h</td><td>—</td><td><b>재작업</b></td></tr>
+      <tr><td>4</td><td>이상치 검토</td><td>재무 B</td><td>4h</td><td>0.5일</td><td>수작업 대조</td></tr>
+      <tr><td>5</td><td>보고서 초안 작성</td><td>재무 B</td><td>5h</td><td>—</td><td>반복 서식</td></tr>
+      <tr><td>6</td><td>팀장 리뷰·승인</td><td>팀장</td><td>1h</td><td><b>1.5일</b></td><td>대기</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">작업시간 합계 ≈ 33h, 리드타임 ≈ 6일 — <b>가치 시간 비율 7%</b>. 숫자가 보이면 고칠 곳이 보입니다. (예시 수치)</p>
+</section>
+
+<!-- 12. Process mining -->
+<section>
+  <span class="eyebrow">Tool 3</span>
+  <h2>프로세스 마이닝 · 태스크 마이닝</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>⛏️ 프로세스 마이닝</h4>
+      <p>시스템 <b>이벤트 로그</b>(케이스ID·활동·시각)에서 실제 흐름을 자동 복원합니다.</p>
+      <ul class="small">
+        <li>발견: 실제 프로세스 시각화</li>
+        <li>적합성: 규정 vs 실제 편차</li>
+        <li>향상: 보틀넥·반복 루프 탐지</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🖱️ 태스크 마이닝</h4>
+      <p>PC 조작 기록으로 <b>화면 단위 작업</b>을 복원합니다. (복사·전환·재입력 탐지)</p>
+      <h4 style="margin-top:0.6em">언제 쓰는가</h4>
+      <ul class="small">
+        <li>로그가 풍부하면 → 프로세스 마이닝 우선</li>
+        <li>수기·엑셀 중심이면 → 인터뷰 + 태스크 마이닝</li>
+        <li>둘 다 없으면 → 체크리스트 기반 관찰 (다음 슬라이드)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 13. Interview checklist -->
+<section>
+  <span class="eyebrow">No Logs?</span>
+  <h2>로그가 없을 때 — 인터뷰·관찰 체크리스트</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>담당자에게 묻기</h4>
+      <ul class="small">
+        <li>"이 일을 시작하기 전에 무엇을 기다리나요?"</li>
+        <li>"한 건 처리하는 데 실제로 몇 분 걸리나요?"</li>
+        <li>"다시 하는 일은 얼마나 자주, 왜 생기나요?"</li>
+        <li>"규정과 다르게 처리하는 경우가 있나요?"</li>
+        <li>"이 단계가 사라져도 문제없다면?"</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>눈으로 확인하기</h4>
+      <ul class="small">
+        <li>메일·메신저 독촉 빈도</li>
+        <li>엑셀 수기 장부 존재 여부</li>
+        <li>시스템 간 복사·붙여넣기</li>
+        <li>"임시 파일" 폴더의 규모</li>
+        <li>예외 처리의 즉흥성</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 14. Divider -->
+<section class="divider">
+  <span class="eyebrow">Part 3</span>
+  <h2>낭비 식별과 <span class="grad-text">측정</span></h2>
+  <p class="muted">이름 붙일 수 있어야 줄일 수 있다</p>
+</section>
+
+<!-- 15. 8 wastes -->
+<section>
+  <span class="eyebrow">Waste</span>
+  <h2>지식업무의 8대 낭비</h2>
+  <div class="grid-4">
+    <div class="card"><span class="ico">⏳</span><h4>대기</h4><p>승인·회신·마감 줄서기</p></div>
+    <div class="card"><span class="ico">🔁</span><h4>핸드오프</h4><p>전달·인계의 컨텍스트 비용</p></div>
+    <div class="card"><span class="ico">🩹</span><h4>재작업</h4><p>반려·수정·이중 확인</p></div>
+    <div class="card"><span class="ico">🔍</span><h4>탐색</h4><p>파일·규정·이력 찾기</p></div>
+    <div class="card"><span class="ico">🎛️</span><h4>과잉 처리</h4><p>안 해도 될 보고·양식</p></div>
+    <div class="card"><span class="ico">🔀</span><h4>컨텍스트 전환</h4><p>잦은 끼어들기·멀티태스킹</p></div>
+    <div class="card"><span class="ico">⌨️</span><h4>전사·재입력</h4><p>시스템 간 베껴 쓰기</p></div>
+    <div class="card"><span class="ico">🚨</span><h4>예외 반복</h4><p>매번 새로 판단하는 동일 유형</p></div>
+  </div>
+  <p class="small muted">린(Lean)의 7대 낭비를 지식업무에 맞게 재정의했습니다. As-Is 표의 '의심 낭비' 열에 이 이름을 붙이세요.</p>
+</section>
+
+<!-- 16. Waste questions -->
+<section>
+  <span class="eyebrow">Hunting</span>
+  <h2>낭비를 찾아내는 질문</h2>
+  <table>
+    <thead><tr><th>낭비</th><th>탐지 질문</th></tr></thead>
+    <tbody>
+      <tr><td class="em">대기</td><td>"이 단계 앞에 줄이 있나요? 평균 며칠?"</td></tr>
+      <tr><td class="em">재작업</td><td>"한 번에 통과하는 비율이 몇 %인가요?"</td></tr>
+      <tr><td class="em">전사·재입력</td><td>"같은 정보를 몇 번 입력하나요?"</td></tr>
+      <tr><td class="em">탐색</td><td>"필요한 걸 찾는 데 하루 몇 분?"</td></tr>
+      <tr><td class="em">예외 반복</td><td>"매번 새로 판단하지만 사실 유형이 정해져 있죠?"</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 17. Metrics -->
+<section>
+  <span class="eyebrow">Metrics</span>
+  <h2>As-Is를 정량화하는 6가지 지표</h2>
+  <table class="tbl-sm">
+    <thead><tr><th>지표</th><th>정의</th><th>왜 중요한가</th></tr></thead>
+    <tbody>
+      <tr><td class="em">Lead Time</td><td>요청 → 완료의 벽시계 시간</td><td>고객이 체감하는 속도</td></tr>
+      <tr><td class="em">Cycle Time</td><td>한 건을 연속 처리하는 시간</td><td>처리 능력의 단위</td></tr>
+      <tr><td class="em">Touch Time</td><td>실제 사람이 작업한 시간</td><td>리드타임과 비교해 대기 비중 산출</td></tr>
+      <tr><td class="em">%STP</td><td>사람 개입 없이 완결되는 비율</td><td>AX의 대표 성과 지표</td></tr>
+      <tr><td class="em">오류·반려율</td><td>재처리/반려 건수 비율</td><td>품질 비용의 원천</td></tr>
+      <tr><td class="em">건당 비용</td><td>총 운영비 ÷ 처리 건수</td><td>ROI 계산의 기준선</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 18. Metrics example -->
+<section>
+  <span class="eyebrow">Example · 예시</span>
+  <h2>숫자로 읽는 As-Is — 구매 송장 처리</h2>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="num">4.6일</div><div class="lbl">Lead Time</div></div>
+    <div class="kpi"><div class="num">25분</div><div class="lbl">Touch Time/건</div></div>
+    <div class="kpi"><div class="num">31%</div><div class="lbl">%STP</div></div>
+    <div class="kpi"><div class="num">12%</div><div class="lbl">오류·반려율</div></div>
+  </div>
+  <div class="callout info"><span class="t">해석 연습</span>터치 25분인데 리드 4.6일 ⇒ 시간의 <b>99.6%가 대기</b>. 속도를 높이려면 작업 단축이 아니라 <b>대기와 예외를 제거</b>해야 합니다. %STP 31%는 개선 여지 69%p를 뜻합니다.</div>
+</section>
+
+<!-- 19. Bottleneck -->
+<section>
+  <span class="eyebrow">Bottleneck</span>
+  <h2>보틀넥과 큐의 신호</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>직관 — 리틀의 법칙</h4>
+      <p class="mono small">리드타임 = 진행 중 작업량(WIP) ÷ 처리율</p>
+      <p class="small">줄(WIP)이 길면 리드타임이 깁니다. 보틀넥은 <b>가장 긴 줄 앞</b>에 있습니다.</p>
+    </div>
+    <div class="card">
+      <h4>현장의 큐 신호</h4>
+      <ul class="small">
+        <li>읽지 않은 메일·결재함이 쌓인 사람</li>
+        <li>"급한 건"이 끼어드는 빈도</li>
+        <li>특정 담당자만 할 수 있는 단계</li>
+        <li>마감 직전 폭주 패턴</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout key"><span class="t">원칙</span>보틀넥이 아닌 단계를 개선하면 전체 리드타임은 거의 변하지 않습니다. <b>제약부터</b> 푸세요.</div>
+</section>
+
+<!-- 20. Activity -->
+<section>
+  <div class="activity">
+    <span class="badge">실습 1 · 25분</span>
+    <h3>우리 팀 As-Is 그리기</h3>
+    <ol>
+      <li><b>경계 설정 (5분)</b> — SIPOC로 시작·끝·입출력 합의</li>
+      <li><b>단계 기록 (10분)</b> — 워크시트 A에 단계·담당·작업시간·대기·의심 낭비 작성</li>
+      <li><b>지표 추정 (5분)</b> — 리드타임·%STP·반려율을 현재 감각으로라도 기록</li>
+      <li><b>Top 3 낭비 선정 (5분)</b> — 가장 큰 낭비 3개에 별표</li>
+    </ol>
+    <p class="small">📄 <a href="worksheet.html" target="_blank">워크시트 A · As-Is 매핑</a> — 인쇄본 또는 새 탭으로 열어 두세요. 정확한 숫자가 아니어도 됩니다. <b>구조를 채우는 것</b>이 목표입니다.</p>
+  </div>
+</section>
+
+<!-- 21. Case practice -->
+<section>
+  <span class="eyebrow">Case · 예시</span>
+  <h2>케이스로 연습 — 월간 마감의 Top 3 낭비</h2>
+  <table>
+    <thead><tr><th>순위</th><th>낭비</th><th>증거</th><th>영향</th></tr></thead>
+    <tbody>
+      <tr><td class="em">1</td><td>대기 (팀별 제출)</td><td>평균 2일, 독촉 메일 월 30건</td><td>리드타임의 33%</td></tr>
+      <tr><td class="em">2</td><td>재작업 (양식 불일치)</td><td>8개 팀 중 5팀 매월 수정</td><td>월 6h 손실</td></tr>
+      <tr><td class="em">3</td><td>수기 대조 (이상치)</td><td>수작업 4h, 휴먼에러 연 3건</td><td>품질 리스크</td></tr>
+    </tbody>
+  </table>
+  <p class="small">이 목록이 Module 3 재설계의 <b>입력</b>이 됩니다. 낭비마다 "없앨 수 있는가, 줄일 수 있는가, 자동화할 수 있는가"를 묻게 됩니다.</p>
+</section>
+
+<!-- 22. Mistakes -->
+<section>
+  <span class="eyebrow">Pitfalls</span>
+  <h2>As-Is 진단의 흔한 실수</h2>
+  <ul>
+    <li><b>그리면서 해결책부터 말하기</b> — 진단과 처방을 섞으면 관찰이 얕아집니다</li>
+    <li><b>규정문 베끼기</b> — 실제 흐름과의 차이가 바로 개선 포인트입니다</li>
+    <li><b>평균만 보기</b> — 최악 10% 케이스에 예외 처리 비용이 숨어 있습니다</li>
+    <li><b>담당자 없이 그리기</b> — 실무자의 "비공식 노하우"가 프로세스의 실체입니다</li>
+  </ul>
+</section>
+
+<!-- 23. Summary -->
+<section>
+  <span class="eyebrow">Summary</span>
+  <h2>Module 2 요약</h2>
+  <ul>
+    <li>부서가 아니라 <b>흐름</b>을 본다 — 문제는 핸드오프 사이에 있다</li>
+    <li>SIPOC로 경계를, VSM으로 시간(작업/대기)을 기록한다</li>
+    <li>로그가 있으면 마이닝, 없으면 <b>인터뷰·관찰</b></li>
+    <li>8대 낭비에 이름을 붙이고 6개 지표로 정량화한다</li>
+    <li>산출물: As-Is 지도 + 낭비 목록 + Top 3</li>
+  </ul>
+</section>
+
+<!-- 24. Check & next -->
+<section>
+  <span class="eyebrow">Check &amp; Next</span>
+  <h2>셀프 체크 · 다음 모듈 예고</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h4>30초 셀프 체크</h4>
+      <ol>
+        <li>리드타임과 터치타임의 차이를 설명할 수 있는가?</li>
+        <li>우리 프로세스의 %STP 추정치는?</li>
+        <li>Top 3 낭비는 무엇이며 근거는?</li>
+      </ol>
+    </div>
+    <div class="card accent">
+      <h4>다음: Module 3</h4>
+      <p><b>To-Be 워크플로우 재설계</b> — ECRS 원칙, 인간-AI 역할 매트릭스, HITL과 에이전틱 워크플로우 패턴으로 낭비를 제거합니다.</p>
+    </div>
+  </div>
+  <p class="tc small muted" style="margin-top:0.8em"><a href="module3.html">Module 3로 이동 →</a> · <a href="../index.html">과정 홈</a></p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/zoom/zoom.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/search/search.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  transition: 'slide',
+  width: 1280,
+  height: 720,
+  margin: 0.06,
+  minScale: 0.2,
+  maxScale: 1.6,
+  plugins: [RevealHighlight, RevealNotes, RevealZoom, RevealSearch]
+});
+</script>
+</body>
+</html>
