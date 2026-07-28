@@ -1,4 +1,4 @@
-# AX 도입 × E2E 워크플로우 재설계 — Process Innovation 1일 과정
+# AX 도입 × E2E 워크플로우 재설계 — 5일 개인 학습 · 1일 강의형 워크숍
 
 AX(AI Transformation) 도입 관점에서 End-to-End 워크플로우를 재설계하고 프로세스 혁신을 실행하는 방법을 배우는 정적 학습 사이트입니다. **5일 개인 학습 코스**와 [reveal.js](https://revealjs.com/) 기반 **1일 강의형 슬라이드**를 함께 제공하며, GitHub Pages에 그대로 배포할 수 있습니다.
 

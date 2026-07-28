@@ -27,6 +27,10 @@ function contrastRatio(first, second) {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
+function visibleText(markup) {
+  return markup.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 test('app module can be imported without browser globals', async () => {
   const appModule = await import('../study/app.js');
   assert.ok(appModule);
@@ -277,4 +281,48 @@ test('README documents the personal study app structure and browser storage beha
   assert.match(readme, /서버[^\n]*(?:없|불필요)|(?:없|불필요)[^\n]*서버/);
   assert.match(readme, /브라우저[^\n]*(?:진도|저장)|(?:진도|저장)[^\n]*브라우저/);
   assert.match(readme, /(?:초기화|리셋)/);
+});
+
+test('hub metadata and hero consistently introduce both learning modes', async () => {
+  const html = await readRootFile('index.html');
+  const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1] ?? '';
+  const description = html.match(/<meta\b(?=[^>]*name=["']description["'])(?=[^>]*content=["']([^"']+)["'])[^>]*>/i)?.[1] ?? '';
+  const hero = html.match(/<header\b[^>]*class=["'][^"']*\bhero\b[^"']*["'][^>]*>[\s\S]*?<\/header>/i)?.[0] ?? '';
+  const eyebrow = visibleText(hero.match(/<[^>]*class=["'][^"']*\beyebrow\b[^"']*["'][^>]*>[\s\S]*?<\/[^>]+>/i)?.[0] ?? '');
+  const summary = visibleText(hero.match(/<p\b[^>]*class=["'][^"']*\bsub\b[^"']*["'][^>]*>[\s\S]*?<\/p>/i)?.[0] ?? '');
+  const chips = visibleText(hero.match(/<div\b[^>]*class=["'][^"']*\bchips\b[^"']*["'][^>]*>[\s\S]*?<\/div>/i)?.[0] ?? '');
+  const footer = visibleText(html.match(/<footer\b[\s\S]*?<\/footer>/i)?.[0] ?? '');
+
+  for (const [area, text] of Object.entries({ title, description, eyebrow, summary, chips, footer })) {
+    assert.match(text, /5일/, `${area} must mention the five-day offering`);
+    assert.match(text, /1일/, `${area} must mention the one-day offering`);
+    assert.match(text, /개인\s*학습|자기\s*주도/, `${area} must identify the self-paced mode`);
+    assert.match(text, /강의형|워크숍/, `${area} must identify the instructor-led mode`);
+  }
+
+  assert.match(visibleText(hero), /AX/);
+  assert.match(visibleText(hero), /E2E/);
+});
+
+test('hub statistics represent both course offerings with accurate counts', async () => {
+  const html = await readRootFile('index.html');
+  const stats = visibleText(html.match(/<div\b[^>]*class=["'][^"']*\bstats\b[^"']*["'][^>]*>[\s\S]*?<\/header>/i)?.[0] ?? '');
+
+  assert.match(stats, /2\s*(?:개\s*)?(?:학습\s*)?모드/);
+  assert.match(stats, /20\s*(?:개\s*)?(?:개인\s*학습\s*)?(?:레슨|학습)/);
+  assert.match(stats, /119\s*(?:장|개)?\s*(?:강의형\s*)?슬라이드/);
+  assert.match(stats, /16\s*(?:개|문항)?\s*(?:해설형\s*)?퀴즈/);
+});
+
+test('README heading and introduction frame the project as two learning modes', async () => {
+  const readme = await readRootFile('README.md');
+  const heading = readme.match(/^#\s+(.+)$/m)?.[1] ?? '';
+  const introduction = readme.match(/^#\s+.+\r?\n\r?\n([^\n]+)/)?.[1] ?? '';
+
+  for (const [area, text] of Object.entries({ heading, introduction })) {
+    assert.match(text, /5일/);
+    assert.match(text, /1일/);
+    assert.match(text, /개인\s*학습|자기\s*주도/);
+    assert.match(text, /강의형|워크숍/);
+  }
 });
