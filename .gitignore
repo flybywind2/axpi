@@ -1,2 +1,4 @@
 .verify/
 .worktrees/
+.playwright-cli/
+output/playwright/

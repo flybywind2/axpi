@@ -159,6 +159,7 @@ test('study page exposes the complete accessible learning shell', async () => {
 
   assert.match(html, /<script\s+type=["']module["']\s+src=["']\.\/app\.js["']/i);
   assert.match(html, /<link[^>]+href=["']\.\/styles\.css["']/i);
+  assert.match(html, /<link[^>]+rel=["']icon["'][^>]+href=["']\.\.\/assets\/img\/favicon\.svg["']/i);
   assert.match(html, /<progress[^>]+id=["']course-progress["'][^>]+aria-label=/i);
   assert.match(html, /<dialog[^>]+id=["']reset-dialog["'][^>]+aria-labelledby=["']reset-dialog-title["']/i);
   assert.match(html, /id=["']reset-dialog-title["']/i);
