@@ -135,6 +135,34 @@ test('scroll behavior disables smooth motion when the user requests reduced moti
   assert.equal(preferredScrollBehavior(standard), 'smooth');
 });
 
+test('overall progress counts all lessons with no quizzes as eighty percent', async () => {
+  const { courseActivityProgress } = await import('../study/app.js');
+  const state = {
+    completedLessons: course.days.flatMap((day) => day.lessons.map((lesson) => lesson.id)),
+    quizScores: {},
+    lastLocation: { dayId: 'day5', lessonId: 'quiz' },
+  };
+  assert.deepEqual(courseActivityProgress(course, state), {
+    completed: 20,
+    total: 25,
+    percentage: 80,
+  });
+});
+
+test('overall progress counts every submitted Day quiz including a zero score', async () => {
+  const { courseActivityProgress } = await import('../study/app.js');
+  const state = {
+    completedLessons: course.days.flatMap((day) => day.lessons.map((lesson) => lesson.id)),
+    quizScores: Object.fromEntries(course.days.map((day, index) => [day.id, index === 0 ? 0 : 100])),
+    lastLocation: { dayId: 'day5', lessonId: 'quiz' },
+  };
+  assert.deepEqual(courseActivityProgress(course, state), {
+    completed: 25,
+    total: 25,
+    percentage: 100,
+  });
+});
+
 test('study page exposes the complete accessible learning shell', async () => {
   const html = await readStudyFile('index.html');
   const requiredIds = [
@@ -234,9 +262,20 @@ test('app implements routing, persistence, grading, reset, and every content blo
   assert.match(app, /addEventListener\(['"]hashchange['"],\s*\(\)\s*=>\s*renderRoute\(\{\s*focusAfterRender:\s*true\s*\}\)\)/);
   assert.doesNotMatch(app, /addEventListener\(['"]popstate['"]/);
   assert.match(app, /const feedback = createElement\(['"]div['"],\s*\{\s*attrs:\s*\{[^}]*['"]aria-live['"]:\s*['"]polite['"][^}]*tabindex:\s*['"]-1['"]/s);
+  assert.ok((app.match(/courseActivityProgress\(course, state\)/g) ?? []).length >= 2, 'top and hero progress must share the activity helper');
+  assert.match(app, /학습 활동/);
+  assert.match(app, /레슨\+Day 퀴즈/);
+  assert.match(app, /Day 핵심 요약/);
+  assert.match(app, /appendTextList\([^;]*day\.summary/s);
   assert.doesNotMatch(app, /\beval\s*\(/);
   assert.doesNotMatch(app, /document\.write\s*\(/);
   assert.doesNotMatch(app, /\.innerHTML\s*=/, 'content must be rendered with DOM APIs, not innerHTML');
+});
+
+test('hub labels the legacy self-study slide instructions as workshop slide review', async () => {
+  const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(html, /<li><b>자기주도 학습<\/b>/);
+  assert.match(html, /<li><b>슬라이드 복습<\/b>:[^<]*(?:워크숍)[^<]*(?:슬라이드)/);
 });
 
 test('learning hub navigation exposes the personal study course', async () => {

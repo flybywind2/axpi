@@ -8,7 +8,6 @@ import {
 
 const STORAGE_KEY = 'axpi-study-v1';
 const allLessons = course.days.flatMap((day) => day.lessons);
-const totalLessons = allLessons.length;
 const hasBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
 
 function lessonPath(day, lesson) {
@@ -52,6 +51,20 @@ export function dayContinuePath(day, courseState) {
   if (firstUnfinished) return lessonPath(day, firstUnfinished);
   if (!Object.hasOwn(courseState?.quizScores ?? {}, day.id)) return quizPath(day);
   return lessonPath(day, day.lessons[0]);
+}
+
+export function courseActivityProgress(courseData, courseState) {
+  const sanitized = sanitizeCourseState(courseState, courseData);
+  const total = courseData.days.reduce((count, day) => count + day.lessons.length + 1, 0);
+  const completedActivityIds = [
+    ...sanitized.completedLessons.map((lessonId) => `lesson:${lessonId}`),
+    ...Object.keys(sanitized.quizScores).map((dayId) => `quiz:${dayId}`),
+  ];
+  return {
+    completed: completedActivityIds.length,
+    total,
+    percentage: calculateProgress(completedActivityIds, total),
+  };
 }
 
 export function globalContinuePath(courseData, courseState) {
@@ -172,11 +185,11 @@ function dayLessonProgress(day) {
 }
 
 function updateProgress() {
-  const progress = calculateProgress(state.completedLessons, totalLessons);
-  elements.progress.value = progress;
-  elements.progress.textContent = `${progress}%`;
-  elements.progressText.textContent = `전체 진도 ${progress}% · ${state.completedLessons.length}/${totalLessons} 레슨`;
-  elements.progress.setAttribute('aria-valuetext', `${totalLessons}개 레슨 중 ${state.completedLessons.length}개 완료, ${progress}%`);
+  const progress = courseActivityProgress(course, state);
+  elements.progress.value = progress.percentage;
+  elements.progress.textContent = `${progress.percentage}%`;
+  elements.progressText.textContent = `전체 진도 ${progress.percentage}% · ${progress.completed}/${progress.total} 학습 활동`;
+  elements.progress.setAttribute('aria-valuetext', `${progress.total}개 학습 활동 중 ${progress.completed}개 완료, ${progress.percentage}%`);
 }
 
 function renderDayNavigation() {
@@ -219,14 +232,14 @@ function renderHome() {
   setVisibleView('home');
   elements.home.replaceChildren();
 
-  const progress = calculateProgress(state.completedLessons, totalLessons);
+  const progress = courseActivityProgress(course, state);
   const hero = createElement('section', { className: 'home-hero' });
   hero.append(createElement('p', { className: 'eyebrow', text: '5-DAY SELF-PACED COURSE' }));
   hero.append(createElement('h1', { text: course.title, attrs: { id: 'home-title' } }));
   hero.append(createElement('p', { text: course.description }));
-  const heroProgress = createElement('div', { className: 'hero-progress', attrs: { 'aria-label': `현재 학습 진도 ${progress}%` } });
-  heroProgress.append(createElement('strong', { text: `${progress}%` }));
-  heroProgress.append(createElement('span', { text: `${state.completedLessons.length}개 레슨 완료 · 하루 약 45~70분` }));
+  const heroProgress = createElement('div', { className: 'hero-progress', attrs: { 'aria-label': `현재 학습 진도 ${progress.percentage}%, ${progress.completed}/${progress.total} 학습 활동 완료` } });
+  heroProgress.append(createElement('strong', { text: `${progress.percentage}%` }));
+  heroProgress.append(createElement('span', { text: `${progress.completed}/${progress.total} 학습 활동 완료 · 레슨+Day 퀴즈` }));
   hero.append(heroProgress);
   elements.home.append(hero);
 
@@ -408,6 +421,11 @@ function renderQuizFeedback(container, day, answers, result) {
   summary.append(createElement('h2', { text: `이번 점수 ${result.score}점` }));
   summary.append(createElement('p', { text: `Day ${day.dayNumber} 최고 점수는 ${bestScore}점입니다. ${isDayComplete(day) ? '레슨과 퀴즈를 모두 마쳐 Day 학습이 완료되었습니다.' : '아직 완료하지 않은 레슨이 있습니다.'}` }));
   container.append(summary);
+
+  const dayReview = createElement('section', { className: 'day-summary' });
+  dayReview.append(createElement('h3', { text: 'Day 핵심 요약' }));
+  appendTextList(dayReview, day.summary);
+  container.append(dayReview);
 
   day.quiz.forEach((question, index) => {
     const correct = result.results[index];
