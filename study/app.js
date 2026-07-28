@@ -70,6 +70,12 @@ export function preferredScrollBehavior(browserWindow) {
   return browserWindow?.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 'auto' : 'smooth';
 }
 
+export function focusRenderedView(target, shouldFocus) {
+  if (!shouldFocus || typeof target?.focus !== 'function') return false;
+  target.focus({ preventScroll: true });
+  return true;
+}
+
 const elements = hasBrowser ? {
   progress: document.querySelector('#course-progress'),
   progressText: document.querySelector('#course-progress-text'),
@@ -150,7 +156,7 @@ export function parseRoute(hash, courseData = course) {
 
 function navigate(hash) {
   if (window.location.hash === hash) {
-    renderRoute();
+    renderRoute({ focusAfterRender: true });
   } else {
     window.location.hash = hash;
   }
@@ -451,7 +457,7 @@ function renderQuiz(day) {
   const submit = createElement('button', { className: 'button button-primary', text: '답안 제출', attrs: { type: 'submit' } });
   actions.append(submit);
   form.append(actions);
-  const feedback = createElement('div', { attrs: { 'aria-live': 'polite' } });
+  const feedback = createElement('div', { attrs: { 'aria-live': 'polite', tabindex: '-1' } });
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -475,7 +481,7 @@ function renderQuiz(day) {
   elements.quiz.append(form, feedback);
 }
 
-function renderRoute() {
+function renderRoute({ focusAfterRender = false } = {}) {
   const route = parseRoute(window.location.hash);
   if (route.invalid) {
     window.history.replaceState(null, '', '#/home');
@@ -495,6 +501,7 @@ function renderRoute() {
     ? `${course.title}`
     : `${currentRoute.lesson?.title ?? `${currentRoute.day.title} 퀴즈`} · ${course.title}`;
   window.scrollTo({ top: 0, behavior: 'auto' });
+  focusRenderedView(elements.learningView, focusAfterRender);
 }
 
 if (hasBrowser) {
@@ -514,8 +521,7 @@ if (hasBrowser) {
     navigate('#/home');
   });
 
-  window.addEventListener('hashchange', renderRoute);
-  window.addEventListener('popstate', renderRoute);
+  window.addEventListener('hashchange', () => renderRoute({ focusAfterRender: true }));
 
   if (!window.location.hash) window.history.replaceState(null, '', '#/home');
   renderRoute();

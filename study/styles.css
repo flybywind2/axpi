@@ -4,13 +4,13 @@
   --raised: #FFFFFF;
   --ink: #111827;
   --body: #465161;
-  --muted: #7B8496;
+  --muted: #5F6B7A;
   --hairline: #D8E0EC;
   --hairline-strong: #B8C4D6;
   --blue: #245BFF;
   --violet: #7C3AED;
   --cyan: #21D4FD;
-  --success: #008A72;
+  --success: #007A63;
   --danger: #C62828;
   --deep: #07111F;
   --shadow: 0 12px 32px rgba(17, 24, 39, 0.08);
@@ -51,7 +51,7 @@ a { color: inherit; }
 .skip-link:focus { transform: translateY(0); }
 
 :focus-visible {
-  outline: 3px solid var(--cyan);
+  outline: 3px solid var(--blue);
   outline-offset: 3px;
 }
 

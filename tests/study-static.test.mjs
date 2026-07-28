@@ -5,9 +5,41 @@ import { course } from '../study/content.js';
 
 const readStudyFile = (name) => readFile(new URL(`../study/${name}`, import.meta.url), 'utf8');
 
+function parseColorVariables(css) {
+  return Object.fromEntries(
+    [...css.matchAll(/--([a-z-]+):\s*(#[0-9a-f]{6})\s*;/gi)]
+      .map((match) => [match[1], match[2]]),
+  );
+}
+
+function relativeLuminance(hex) {
+  const channels = hex.slice(1).match(/.{2}/g).map((value) => Number.parseInt(value, 16) / 255);
+  const linear = channels.map((value) => (
+    value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+  ));
+  return (0.2126 * linear[0]) + (0.7152 * linear[1]) + (0.0722 * linear[2]);
+}
+
+function contrastRatio(first, second) {
+  const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
+  const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 test('app module can be imported without browser globals', async () => {
   const appModule = await import('../study/app.js');
   assert.ok(appModule);
+});
+
+test('route focus helper ignores initial load and focuses after user navigation', async () => {
+  const { focusRenderedView } = await import('../study/app.js');
+  const calls = [];
+  const target = { focus: (options) => calls.push(options) };
+
+  assert.equal(focusRenderedView(target, false), false);
+  assert.deepEqual(calls, []);
+  assert.equal(focusRenderedView(target, true), true);
+  assert.deepEqual(calls, [{ preventScroll: true }]);
 });
 
 test('bad hashes resolve to the safe home route', async () => {
@@ -153,6 +185,27 @@ test('styles implement the approved responsive AI Center learning system', async
   );
 });
 
+test('muted and success text plus the focus outline meet WCAG contrast', async () => {
+  const css = await readStudyFile('styles.css');
+  const colors = parseColorVariables(css);
+  const backgrounds = { white: '#FFFFFF', canvas: colors.canvas };
+
+  for (const token of ['muted', 'success']) {
+    for (const [surface, background] of Object.entries(backgrounds)) {
+      const ratio = contrastRatio(colors[token], background);
+      assert.ok(ratio >= 4.5, `--${token} contrast on ${surface} is ${ratio.toFixed(2)}:1`);
+    }
+  }
+
+  const focusRule = css.match(/:focus-visible\s*\{[^}]*outline:\s*[^;]*var\(--([a-z-]+)\)/is);
+  assert.ok(focusRule, 'focus outline must use a declared color variable');
+  const focusColor = colors[focusRule[1]];
+  for (const [surface, background] of Object.entries(backgrounds)) {
+    const ratio = contrastRatio(focusColor, background);
+    assert.ok(ratio >= 3, `focus outline contrast on ${surface} is ${ratio.toFixed(2)}:1`);
+  }
+});
+
 test('app implements routing, persistence, grading, reset, and every content block', async () => {
   const app = await readStudyFile('app.js');
 
@@ -171,6 +224,10 @@ test('app implements routing, persistence, grading, reset, and every content blo
   assert.match(app, /#\/day\$\{day\.dayNumber\}\/\$\{lesson\.id\}/);
   assert.match(app, /#\/day\$\{day\.dayNumber\}\/quiz/);
   assert.match(app, /textContent/);
+  assert.match(app, /focusRenderedView\(elements\.learningView, focusAfterRender\)/);
+  assert.match(app, /addEventListener\(['"]hashchange['"],\s*\(\)\s*=>\s*renderRoute\(\{\s*focusAfterRender:\s*true\s*\}\)\)/);
+  assert.doesNotMatch(app, /addEventListener\(['"]popstate['"]/);
+  assert.match(app, /const feedback = createElement\(['"]div['"],\s*\{\s*attrs:\s*\{[^}]*['"]aria-live['"]:\s*['"]polite['"][^}]*tabindex:\s*['"]-1['"]/s);
   assert.doesNotMatch(app, /\beval\s*\(/);
   assert.doesNotMatch(app, /document\.write\s*\(/);
   assert.doesNotMatch(app, /\.innerHTML\s*=/, 'content must be rendered with DOM APIs, not innerHTML');
