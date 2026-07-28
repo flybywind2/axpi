@@ -85,6 +85,15 @@ test('normalizeState trims completed lesson IDs before storing and deduplicating
   );
 });
 
+test('normalizeState trims valid last location identifiers before storing', () => {
+  assert.deepEqual(
+    normalizeState({
+      lastLocation: { dayId: ' day2 ', lessonId: ' d2l3 ' },
+    }).lastLocation,
+    { dayId: 'day2', lessonId: 'd2l3' },
+  );
+});
+
 test('normalizeState only preserves integer quiz scores from 0 through 100', () => {
   assert.deepEqual(
     normalizeState({
@@ -99,6 +108,21 @@ test('normalizeState only preserves integer quiz scores from 0 through 100', () 
       },
     }).quizScores,
     { zero: 0, full: 100 },
+  );
+});
+
+test('normalizeState trims quiz score keys and the last valid collision wins', () => {
+  assert.deepEqual(
+    normalizeState({
+      quizScores: {
+        day1: 40,
+        ' day1 ': 70,
+        'day1  ': 101,
+        ' day2 ': 80,
+        day2: 90,
+      },
+    }).quizScores,
+    { day1: 70, day2: 90 },
   );
 });
 

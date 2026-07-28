@@ -67,7 +67,7 @@ export function normalizeState(value) {
   if (value.quizScores !== null && typeof value.quizScores === 'object' && !Array.isArray(value.quizScores)) {
     for (const [quizId, score] of Object.entries(value.quizScores)) {
       if (isValidId(quizId) && Number.isInteger(score) && score >= 0 && score <= 100) {
-        quizScores[quizId] = score;
+        quizScores[quizId.trim()] = score;
       }
     }
   }
@@ -75,7 +75,7 @@ export function normalizeState(value) {
   return {
     completedLessons: uniqueValidIds(value.completedLessons),
     lastLocation: hasValidLocation
-      ? { dayId: lastLocation.dayId, lessonId: lastLocation.lessonId }
+      ? { dayId: lastLocation.dayId.trim(), lessonId: lastLocation.lessonId.trim() }
       : defaults.lastLocation,
     quizScores,
   };
