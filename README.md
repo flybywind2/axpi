@@ -1,11 +1,16 @@
 # AX 도입 × E2E 워크플로우 재설계 — Process Innovation 1일 과정
 
-AX(AI Transformation) 도입 관점에서 End-to-End 워크플로우를 재설계하고 프로세스 혁신을 실행하는 방법을 배우는 **하루 분량의 HTML 슬라이드 코스**입니다. [reveal.js](https://revealjs.com/) 기반 정적 사이트로, GitHub Pages에 그대로 배포할 수 있습니다.
+AX(AI Transformation) 도입 관점에서 End-to-End 워크플로우를 재설계하고 프로세스 혁신을 실행하는 방법을 배우는 정적 학습 사이트입니다. **5일 개인 학습 코스**와 [reveal.js](https://revealjs.com/) 기반 **1일 강의형 슬라이드**를 함께 제공하며, GitHub Pages에 그대로 배포할 수 있습니다.
 
 ## 구성
 
 ```text
 ├── index.html              # 코스 허브 (아젠다 · 모듈 바로가기 · 학습 가이드)
+├── study/index.html        # 5일 개인 학습 앱 진입점
+├── study/styles.css        # 개인 학습 앱 반응형 스타일
+├── study/app.js            # 화면 렌더링 · 진도 저장 · 퀴즈 동작
+├── study/content.js        # 5일 학습 콘텐츠와 해설형 퀴즈
+├── study/state.js          # 진도 계산과 학습 상태 정규화
 ├── slides/
 │   ├── module1.html        # Session 1 · AX와 프로세스 혁신 패러다임 (80분)
 │   ├── module2.html        # Session 2 · E2E 워크플로우 As-Is 진단 (80분)
@@ -21,12 +26,20 @@ AX(AI Transformation) 도입 관점에서 End-to-End 워크플로우를 재설�
 └── .nojekyll               # GitHub Pages 정적 서빙 설정
 ```
 
+## 두 가지 학습 모드
+
+- **개인 학습** (`study/`): 5일 동안 개념을 읽고 해설형 퀴즈를 풀 수 있습니다. 마지막 학습 위치, 완료한 레슨, 퀴즈 최고 점수는 브라우저 `localStorage`의 `axpi-study-v1` 키에 자동으로 진도 저장됩니다.
+- **강의형 슬라이드** (`slides/module1.html`): 퍼실리테이터와 함께 하루 워크숍으로 진행하는 reveal.js 슬라이드와 인쇄용 워크시트입니다.
+
+개인 학습에는 로그인과 서버가 없습니다. 진도는 사용 중인 브라우저에만 보관되므로 다른 브라우저나 기기와 동기화되지 않으며, 개인 학습 화면의 **학습 기록 초기화**에서 언제든 해당 브라우저의 진도와 점수를 초기화할 수 있습니다.
+
 ## 로컬에서 보기
 
 ```powershell
 # 저장소 루트에서
 python -m http.server 8000
-# 브라우저에서 http://localhost:8000 접속
+# 코스 허브: http://localhost:8000
+# 개인 학습: http://localhost:8000/study/
 ```
 
 > reveal.js·폰트는 CDN(jsDelivr)에서 불러오므로 인터넷 연결이 필요합니다.
@@ -48,7 +61,7 @@ python -m http.server 8000
    gh api repos/{owner}/axpi/pages -X POST -f "source[branch]=main" -f "source[path]=/"
    ```
 
-3. 수 분 뒤 `https://{owner}.github.io/axpi/` 에서 열립니다.
+3. 수 분 뒤 `https://{owner}.github.io/axpi/` 에서 코스 허브가 열립니다. 개인 학습은 `https://{owner}.github.io/axpi/study/`에서 바로 시작할 수도 있습니다.
 
 ## 슬라이드 조작
 

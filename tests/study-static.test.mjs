@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { course } from '../study/content.js';
 
 const readStudyFile = (name) => readFile(new URL(`../study/${name}`, import.meta.url), 'utf8');
+const readRootFile = (name) => readFile(new URL(`../${name}`, import.meta.url), 'utf8');
 
 function parseColorVariables(css) {
   return Object.fromEntries(
@@ -231,4 +232,49 @@ test('app implements routing, persistence, grading, reset, and every content blo
   assert.doesNotMatch(app, /\beval\s*\(/);
   assert.doesNotMatch(app, /document\.write\s*\(/);
   assert.doesNotMatch(app, /\.innerHTML\s*=/, 'content must be rendered with DOM APIs, not innerHTML');
+});
+
+test('learning hub navigation exposes the personal study course', async () => {
+  const html = await readRootFile('index.html');
+  const navigation = html.match(/<nav\b[\s\S]*?<\/nav>/i)?.[0] ?? '';
+
+  assert.match(
+    navigation,
+    /<a\b[^>]*href=["']study\/["'][^>]*>[^<]*개인\s*학습[^<]*<\/a>/i,
+    'top navigation must link to the personal study course',
+  );
+});
+
+test('learning hub hero distinguishes self-paced and instructor-led modes', async () => {
+  const html = await readRootFile('index.html');
+  const hero = html.match(/<header\b[^>]*class=["'][^"']*\bhero\b[^"']*["'][^>]*>[\s\S]*?<\/header>/i)?.[0] ?? '';
+
+  assert.match(
+    hero,
+    /<a\b(?=[^>]*class=["'][^"']*\bprimary\b[^"']*["'])(?=[^>]*href=["']study\/["'])[^>]*>[^<]*개인\s*학습\s*시작[^<]*<\/a>/i,
+    'hero primary action must start the five-day personal course',
+  );
+  assert.match(
+    hero,
+    /<a\b(?=[^>]*href=["']slides\/module1\.html["'])(?![^>]*class=["'][^"']*\bprimary\b)[^>]*>[^<]*(?:강의형|워크숍)[^<]*슬라이드[^<]*<\/a>/i,
+    'hero secondary action must open the instructor-led slides',
+  );
+  assert.match(hero, /href=["']slides\/worksheet\.html["']/i, 'worksheet must remain reachable');
+});
+
+test('README documents the personal study app structure and browser storage behavior', async () => {
+  const readme = await readRootFile('README.md');
+
+  for (const file of ['study/index.html', 'styles.css', 'app.js', 'content.js', 'state.js']) {
+    assert.ok(readme.includes(file), `README must document ${file}`);
+  }
+
+  assert.match(readme, /5일|5-day/i);
+  assert.match(readme, /진도\s*(?:자동\s*)?저장/);
+  assert.match(readme, /해설(?:형|이\s*제공되는)?\s*퀴즈/);
+  assert.match(readme, /axpi-study-v1/);
+  assert.match(readme, /로그인[^\n]*(?:없|불필요)|(?:없|불필요)[^\n]*로그인/);
+  assert.match(readme, /서버[^\n]*(?:없|불필요)|(?:없|불필요)[^\n]*서버/);
+  assert.match(readme, /브라우저[^\n]*(?:진도|저장)|(?:진도|저장)[^\n]*브라우저/);
+  assert.match(readme, /(?:초기화|리셋)/);
 });
