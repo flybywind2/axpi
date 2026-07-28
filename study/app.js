@@ -9,8 +9,68 @@ import {
 const STORAGE_KEY = 'axpi-study-v1';
 const allLessons = course.days.flatMap((day) => day.lessons);
 const totalLessons = allLessons.length;
+const hasBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
 
-const elements = {
+function lessonPath(day, lesson) {
+  return `#/day${day.dayNumber}/${lesson.id}`;
+}
+
+function quizPath(day) {
+  return `#/day${day.dayNumber}/quiz`;
+}
+
+export function sanitizeCourseState(value, courseData = course) {
+  const normalized = normalizeState(value);
+  const firstDay = courseData.days[0];
+  const firstLesson = firstDay?.lessons[0];
+  const fallbackLocation = firstDay && firstLesson
+    ? { dayId: firstDay.id, lessonId: firstLesson.id }
+    : createInitialState().lastLocation;
+  const validLessonIds = new Set(courseData.days.flatMap((day) => day.lessons.map((lesson) => lesson.id)));
+  const validDayIds = new Set(courseData.days.map((day) => day.id));
+
+  const completedLessons = normalized.completedLessons.filter((lessonId) => validLessonIds.has(lessonId));
+  const quizScores = Object.fromEntries(
+    Object.entries(normalized.quizScores).filter(([dayId]) => validDayIds.has(dayId)),
+  );
+  const locationDay = courseData.days.find((day) => day.id === normalized.lastLocation.dayId);
+  const locationIsValid = locationDay && (
+    normalized.lastLocation.lessonId === 'quiz'
+    || locationDay.lessons.some((lesson) => lesson.id === normalized.lastLocation.lessonId)
+  );
+
+  return {
+    completedLessons,
+    quizScores,
+    lastLocation: locationIsValid ? normalized.lastLocation : fallbackLocation,
+  };
+}
+
+export function dayContinuePath(day, courseState) {
+  const completed = new Set(Array.isArray(courseState?.completedLessons) ? courseState.completedLessons : []);
+  const firstUnfinished = day.lessons.find((lesson) => !completed.has(lesson.id));
+  if (firstUnfinished) return lessonPath(day, firstUnfinished);
+  if (!Object.hasOwn(courseState?.quizScores ?? {}, day.id)) return quizPath(day);
+  return lessonPath(day, day.lessons[0]);
+}
+
+export function globalContinuePath(courseData, courseState) {
+  const sanitized = sanitizeCourseState(courseState, courseData);
+  const day = courseData.days.find((candidate) => candidate.id === sanitized.lastLocation.dayId);
+  if (sanitized.lastLocation.lessonId === 'quiz') return quizPath(day);
+  const lesson = day.lessons.find((candidate) => candidate.id === sanitized.lastLocation.lessonId);
+  return lessonPath(day, lesson);
+}
+
+export function retainBestQuizScore(previousScore, submittedScore) {
+  return previousScore === undefined ? submittedScore : Math.max(previousScore, submittedScore);
+}
+
+export function preferredScrollBehavior(browserWindow) {
+  return browserWindow?.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ? 'auto' : 'smooth';
+}
+
+const elements = hasBrowser ? {
   progress: document.querySelector('#course-progress'),
   progressText: document.querySelector('#course-progress-text'),
   continueButton: document.querySelector('#continue-button'),
@@ -21,9 +81,9 @@ const elements = {
   resetButton: document.querySelector('#reset-progress'),
   resetDialog: document.querySelector('#reset-dialog'),
   learningView: document.querySelector('#learning-view'),
-};
+} : null;
 
-let state = loadState();
+let state = hasBrowser ? loadState() : sanitizeCourseState(null);
 let currentRoute = { type: 'home' };
 
 function createElement(tagName, options = {}) {
@@ -48,14 +108,14 @@ function appendTextList(parent, items, className = '') {
 function loadState() {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    return normalizeState(raw ? JSON.parse(raw) : null);
+    return sanitizeCourseState(raw ? JSON.parse(raw) : null);
   } catch {
-    return normalizeState(null);
+    return sanitizeCourseState(null);
   }
 }
 
 function saveState() {
-  state = normalizeState(state);
+  state = sanitizeCourseState(state);
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
@@ -63,16 +123,8 @@ function saveState() {
   }
 }
 
-function lessonPath(day, lesson) {
-  return `#/day${day.dayNumber}/${lesson.id}`;
-}
-
-function quizPath(day) {
-  return `#/day${day.dayNumber}/quiz`;
-}
-
-function findDay(dayNumber) {
-  return course.days.find((day) => day.dayNumber === Number(dayNumber));
+function findDay(dayNumber, courseData = course) {
+  return courseData.days.find((day) => day.dayNumber === Number(dayNumber));
 }
 
 function findLessonLocation(lessonId) {
@@ -83,17 +135,17 @@ function findLessonLocation(lessonId) {
   return null;
 }
 
-function parseRoute(hash) {
+export function parseRoute(hash, courseData = course) {
   if (!hash || hash === '#' || hash === '#/' || hash === '#/home') return { type: 'home' };
   const match = hash.match(/^#\/day(\d+)\/([^/]+)$/);
-  if (!match) return null;
+  if (!match) return { type: 'home', invalid: true };
 
-  const day = findDay(match[1]);
-  if (!day) return null;
+  const day = findDay(match[1], courseData);
+  if (!day) return { type: 'home', invalid: true };
   if (match[2] === 'quiz') return { type: 'quiz', day };
 
   const lesson = day.lessons.find((candidate) => candidate.id === match[2]);
-  return lesson ? { type: 'lesson', day, lesson } : null;
+  return lesson ? { type: 'lesson', day, lesson } : { type: 'home', invalid: true };
 }
 
 function navigate(hash) {
@@ -121,10 +173,6 @@ function updateProgress() {
   elements.progress.setAttribute('aria-valuetext', `${totalLessons}개 레슨 중 ${state.completedLessons.length}개 완료, ${progress}%`);
 }
 
-function firstPendingLesson(day) {
-  return day.lessons.find((lesson) => !state.completedLessons.includes(lesson.id)) ?? day.lessons[0];
-}
-
 function renderDayNavigation() {
   elements.dayNavigation.replaceChildren();
   for (const day of course.days) {
@@ -144,7 +192,7 @@ function renderDayNavigation() {
       text: dayComplete ? '✓ 학습 완료' : `${completed}/${day.lessons.length} 레슨`,
     }));
     button.append(label);
-    button.addEventListener('click', () => navigate(lessonPath(day, firstPendingLesson(day))));
+    button.addEventListener('click', () => navigate(dayContinuePath(day, state)));
     elements.dayNavigation.append(button);
   }
 }
@@ -189,7 +237,7 @@ function renderHome() {
       text: dayComplete ? `✓ 완료 · 퀴즈 ${state.quizScores[day.id]}점` : `진행 ${completed}/${day.lessons.length} 레슨`,
     }));
     card.append(makeButton(dayComplete ? '다시 보기' : completed ? '계속 학습' : '학습 시작', 'button-secondary', () => {
-      navigate(lessonPath(day, firstPendingLesson(day)));
+      navigate(dayContinuePath(day, state));
     }));
     grid.append(card);
   }
@@ -344,7 +392,7 @@ function selectedAnswers(form, questionCount) {
 function renderQuizFeedback(container, day, answers, result) {
   container.replaceChildren();
   const previousBest = state.quizScores[day.id];
-  const bestScore = previousBest === undefined ? result.score : Math.max(previousBest, result.score);
+  const bestScore = retainBestQuizScore(previousBest, result.score);
   state.quizScores[day.id] = bestScore;
   saveState();
   updateProgress();
@@ -368,6 +416,9 @@ function renderQuizFeedback(container, day, answers, result) {
 function renderQuiz(day) {
   setVisibleView('quiz');
   elements.quiz.replaceChildren();
+
+  state.lastLocation = { dayId: day.id, lessonId: 'quiz' };
+  saveState();
 
   const header = createElement('header', { className: 'quiz-header' });
   header.append(createElement('p', { className: 'eyebrow', text: `DAY ${day.dayNumber} · KNOWLEDGE CHECK` }));
@@ -418,23 +469,15 @@ function renderQuiz(day) {
     const retry = makeButton('다시 풀기', 'button-secondary', () => renderQuiz(day));
     actions.append(retry);
     feedback.focus({ preventScroll: true });
-    feedback.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    feedback.scrollIntoView({ behavior: preferredScrollBehavior(window), block: 'start' });
   });
 
   elements.quiz.append(form, feedback);
 }
 
-function restoreContinueLocation() {
-  const location = findLessonLocation(state.lastLocation.lessonId);
-  if (!location || location.day.id !== state.lastLocation.dayId) {
-    return { day: course.days[0], lesson: course.days[0].lessons[0] };
-  }
-  return location;
-}
-
 function renderRoute() {
   const route = parseRoute(window.location.hash);
-  if (!route) {
+  if (route.invalid) {
     window.history.replaceState(null, '', '#/home');
     currentRoute = { type: 'home' };
     renderHome();
@@ -447,32 +490,33 @@ function renderRoute() {
 
   updateProgress();
   renderDayNavigation();
-  elements.continueButton.hidden = currentRoute.type === 'lesson';
+  elements.continueButton.hidden = currentRoute.type !== 'home';
   document.title = currentRoute.type === 'home'
     ? `${course.title}`
     : `${currentRoute.lesson?.title ?? `${currentRoute.day.title} 퀴즈`} · ${course.title}`;
   window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
-elements.continueButton.addEventListener('click', () => {
-  const { day, lesson } = restoreContinueLocation();
-  navigate(lessonPath(day, lesson));
-});
+if (hasBrowser) {
+  elements.continueButton.addEventListener('click', () => {
+    navigate(globalContinuePath(course, state));
+  });
 
-elements.resetButton.addEventListener('click', () => elements.resetDialog.showModal());
-elements.resetDialog.addEventListener('close', () => {
-  if (elements.resetDialog.returnValue !== 'confirm') return;
-  try {
-    window.localStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // Reset the in-memory state even when browser storage is unavailable.
-  }
-  state = createInitialState();
-  navigate('#/home');
-});
+  elements.resetButton.addEventListener('click', () => elements.resetDialog.showModal());
+  elements.resetDialog.addEventListener('close', () => {
+    if (elements.resetDialog.returnValue !== 'confirm') return;
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Reset the in-memory state even when browser storage is unavailable.
+    }
+    state = sanitizeCourseState(createInitialState());
+    navigate('#/home');
+  });
 
-window.addEventListener('hashchange', renderRoute);
-window.addEventListener('popstate', renderRoute);
+  window.addEventListener('hashchange', renderRoute);
+  window.addEventListener('popstate', renderRoute);
 
-if (!window.location.hash) window.history.replaceState(null, '', '#/home');
-renderRoute();
+  if (!window.location.hash) window.history.replaceState(null, '', '#/home');
+  renderRoute();
+}
