@@ -135,6 +135,12 @@ test('quizzes have unique IDs, four choices, valid answers, and teaching explana
     assertNonEmptyString(quiz.question, `${label}.question`);
     assertStringArray(quiz.options, 4, `${label}.options`);
     assert.equal(quiz.options.length, 4);
+    const normalizedOptions = quiz.options.map((option) => option.trim());
+    assert.equal(
+      new Set(normalizedOptions).size,
+      normalizedOptions.length,
+      `${label}.options must be unique after trimming`,
+    );
     assert.ok(Number.isInteger(quiz.answer) && quiz.answer >= 0 && quiz.answer <= 3);
     assertNonEmptyString(quiz.explanation, `${label}.explanation`);
     assert.ok(quiz.explanation.length >= 80, `${label}.explanation must teach the reasoning`);
@@ -173,9 +179,32 @@ test('the Day 4 worked example explicitly calculates a numeric payback period', 
     type === 'formula' && /회수기간/.test(expression)
   ));
   assert.ok(payback, 'the worked example needs a dedicated payback formula block');
-  assert.match(payback.expression, /9,000만원\s*-\s*2,000만원\s*=\s*7,000만원/);
-  assert.match(payback.expression, /4,000만원\s*÷\s*\(7,000만원\s*÷\s*12개월\)\s*≈\s*6\.9개월/);
-  assert.match(payback.explanation, /교육용 예시/);
+  const workedExample = `${payback.expression} ${payback.explanation}`.replaceAll(',', '');
+  assert.match(workedExample, /연간 순편익[^.]*9000만원[^.]*2000만원[^.]*7000만원/);
+  assert.match(workedExample, /월 순편익[^.]*583만원/);
+  assert.match(workedExample, /초기 (?:투자|비용)[^.]*4000만원/);
+  const monthValues = [...workedExample.matchAll(/(\d+(?:\.\d+)?)개월/g)]
+    .map((match) => Number(match[1]));
+  const paybackMonths = monthValues.find((months) => months >= 6.8 && months <= 7);
+  assert.ok(
+    paybackMonths,
+    `the example must state a numeric payback result near 6.9 months, found ${monthValues.join(', ')}`,
+  );
+  assert.match(workedExample, /교육용 예시/);
+});
+
+test('the Day 5 quality KPI raises accuracy while lowering return or rejection rate', async () => {
+  const { days } = await loadCourse();
+  const lesson = days[4].lessons.find(({ id }) => id === 'd5l2');
+  const criteriaTable = lesson?.blocks.find(({ type, headers = [] }) => (
+    type === 'table' && headers.includes('성공 기준 교육용 예시')
+  ));
+  assert.ok(criteriaTable, 'Day 5 must contain the pilot success and kill criteria table');
+  const qualityRow = criteriaTable.rows.find(([category]) => category === '품질');
+  assert.ok(qualityRow, 'the criteria table must contain a quality row');
+  const successCriterion = qualityRow[1];
+  assert.match(successCriterion, /정확도.{0,12}(?:목표|기준선).{0,5}(?:이상|상회)/);
+  assert.match(successCriterion, /(?:반송률|반려율|거절률).{0,12}(?:목표|기준선).{0,5}(?:이하|하회)/);
 });
 
 function dayTextFor(day) {
