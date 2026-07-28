@@ -164,6 +164,20 @@ test('numeric cases are labeled as educational examples', async () => {
   assert.match(dayTextFor(days[3]), /교육용 예시|예시/);
 });
 
+test('the Day 4 worked example explicitly calculates a numeric payback period', async () => {
+  const { days } = await loadCourse();
+  const lesson = days[3].lessons.find(({ id }) => id === 'd4l3');
+  assert.ok(lesson, 'Day 4 must contain the Benefit, TCO, ROI, and payback lesson');
+
+  const payback = lesson.blocks.find(({ type, expression = '' }) => (
+    type === 'formula' && /회수기간/.test(expression)
+  ));
+  assert.ok(payback, 'the worked example needs a dedicated payback formula block');
+  assert.match(payback.expression, /9,000만원\s*-\s*2,000만원\s*=\s*7,000만원/);
+  assert.match(payback.expression, /4,000만원\s*÷\s*\(7,000만원\s*÷\s*12개월\)\s*≈\s*6\.9개월/);
+  assert.match(payback.explanation, /교육용 예시/);
+});
+
 function dayTextFor(day) {
   return textOf(day);
 }
