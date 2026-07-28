@@ -6,7 +6,7 @@ function isValidId(value) {
 
 function uniqueValidIds(values) {
   if (!Array.isArray(values)) return [];
-  return [...new Set(values.filter(isValidId))];
+  return [...new Set(values.filter(isValidId).map((value) => value.trim()))];
 }
 
 export function createInitialState() {
@@ -30,13 +30,16 @@ export function gradeQuiz(questions, answers) {
   }
 
   const submittedAnswers = Array.isArray(answers) ? answers : [];
-  const results = questions.map((question, index) => (
-    question !== null
-    && typeof question === 'object'
-    && Object.hasOwn(question, 'answer')
-    && index < submittedAnswers.length
-    && submittedAnswers[index] === question.answer
-  ));
+  const results = Array.from({ length: questions.length }, (_, index) => {
+    const question = questions[index];
+    return (
+      question !== null
+      && typeof question === 'object'
+      && Object.hasOwn(question, 'answer')
+      && index < submittedAnswers.length
+      && submittedAnswers[index] === question.answer
+    );
+  });
   const correctCount = results.filter(Boolean).length;
 
   return {
@@ -63,7 +66,7 @@ export function normalizeState(value) {
   const quizScores = {};
   if (value.quizScores !== null && typeof value.quizScores === 'object' && !Array.isArray(value.quizScores)) {
     for (const [quizId, score] of Object.entries(value.quizScores)) {
-      if (isValidId(quizId) && Number.isFinite(score)) {
+      if (isValidId(quizId) && Number.isInteger(score) && score >= 0 && score <= 100) {
         quizScores[quizId] = score;
       }
     }

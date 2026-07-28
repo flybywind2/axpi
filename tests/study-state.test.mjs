@@ -27,6 +27,10 @@ test('calculateProgress counts unique valid lesson IDs', () => {
   assert.equal(calculateProgress(['d1l1', '', null, 12, 'd2l3'], 4), 50);
 });
 
+test('calculateProgress trims lesson IDs before deduplication', () => {
+  assert.equal(calculateProgress(['d1l1', ' d1l1 ', ' d1l2 '], 10), 20);
+});
+
 test('calculateProgress safely handles invalid totals and input', () => {
   assert.equal(calculateProgress(['d1l1'], 0), 0);
   assert.equal(calculateProgress(['d1l1'], -1), 0);
@@ -50,6 +54,15 @@ test('gradeQuiz safely treats missing answers as incorrect', () => {
   assert.deepEqual(gradeQuiz(null, null), { score: 0, results: [] });
 });
 
+test('gradeQuiz returns explicit booleans for sparse questions', () => {
+  const questions = [{ answer: 1 }, , { answer: 0 }];
+
+  assert.deepEqual(
+    gradeQuiz(questions, [1, undefined, 0]),
+    { score: 67, results: [true, false, true] },
+  );
+});
+
 test('normalizeState preserves valid stored learning state', () => {
   assert.deepEqual(
     normalizeState({
@@ -62,6 +75,30 @@ test('normalizeState preserves valid stored learning state', () => {
       lastLocation: { dayId: 'day2', lessonId: 'd2l3' },
       quizScores: { day1: 80, day2: 100 },
     },
+  );
+});
+
+test('normalizeState trims completed lesson IDs before storing and deduplicating', () => {
+  assert.deepEqual(
+    normalizeState({ completedLessons: ['d1l1', ' d1l1 ', ' d2l3 '] }).completedLessons,
+    ['d1l1', 'd2l3'],
+  );
+});
+
+test('normalizeState only preserves integer quiz scores from 0 through 100', () => {
+  assert.deepEqual(
+    normalizeState({
+      quizScores: {
+        zero: 0,
+        full: 100,
+        negative: -1,
+        excessive: 101,
+        fraction: 99.5,
+        infinite: Number.POSITIVE_INFINITY,
+        notANumber: Number.NaN,
+      },
+    }).quizScores,
+    { zero: 0, full: 100 },
   );
 });
 
